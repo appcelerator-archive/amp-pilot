@@ -81,7 +81,7 @@ func initMate(version string) {
 }
 
 func displayConfig(version string) {
-    applog.Log("amp-pilog version: %v", version)
+    applog.Log("amp-pilot version: %v", version)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
@@ -154,10 +154,10 @@ func isAppReady() bool {
     cmd := exec.Command(cmdList[0], cmdList[1:]...)
     err := cmd.Run()
     if err != nil {
-    fmt.Println("app mate not ready: "+conf.CmdReady+" throw error=", err)
+    applog.Log("app mate not ready: "+conf.CmdReady+" throw error=", err)
      return false  
     }
-    fmt.Println("app mate ready: "+conf.CmdReady+" return code 0")
+    applog.Log("app mate ready: "+conf.CmdReady+" return code 0")
     return true
 }
 

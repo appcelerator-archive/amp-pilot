@@ -54,7 +54,27 @@ Conffile is optional and can do not exist. In all cases, if exist, the following
  * AMPPILOT_STOPATMATESTOP: stop the container if the app mate stop by it-self, default=false
  * AMPPILOT_LOGDIRECTORY: log directory, default='.'
  * AMPPILOT_STARTUPLOGSIZE: startup log size (MB), if 0 then no startup logs, default=1
- * AMPPILOT_ROTATELOGSIZE=: rotate log size (MB), if 0 then no rotate logs, default=1
+ * AMPPILOT_ROTATELOGSIZE: rotate log size (MB), if 0 then no rotate logs, default=1
+ * AMPPILOT_LOGFILEFORMAT: log format for logs written in local files, based on time.Format (package time), default "2006-01-02 15:04:05.000"
  * DEPENDENCIES: dependency names list, if not exist then app mate don't have dependency
  * AMPPILOT_[Dependency Name]_ONLYATSTARTUP: to specify for the dependency [DependencyName] that it will be needed at startup, but should not stop the app mate if not ready during app mate running. [Dependency_name] should be uppercase and without '-' character as for instance: amp-log-worker -> AMPLOGWORKER
+
+ ### logs files
+
+ optionaly regarding the $AMPPILOT_STARTUPLOGSIZE and $AMPPILOT_ROTATELOGSIZE, amp-pilot creates logs files in $AMPPILOT_LOGDIRECTORY in case of log chain failure
+
+ To get this logs, enter the following docker commands: if $AMPPILOT_LOGDIRECTORY=/usr/src/app/log
+
+ * to get the first AMPPILOT_STARTUPLOGSIZE MB of logs
+    * docker exec [container name/id] cat /usr/src/app/log/startup.log
+    * when maximum size of startup.log is reached, amp-pilot stops to write logs in it.
+ * to get the last AMPPILOT_ROTATELOGSIZE MB of logs
+    * docker exec [container name/id] cat /usr/src/app/log/current.log
+    * when maximum size of current.log is reached, current.log is moved to previous.log and a new current.log is created
+ * to get the previous AMPPILOT_ROTATELOGSIZE MB of logs (just before the current.log ones)
+    * docker exec [container name/id] cat /usr/src/app/log/previous.log
+
+
+
+
 

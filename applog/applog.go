@@ -6,6 +6,7 @@ import (
     "os"
     "bufio"
     "config"
+    "time"
 )
 
 const startupLogName string = "startup.log"
@@ -133,13 +134,12 @@ func NewStdoutWriter() io.WriteCloser {
     }()
     return appLog.pipeStdoutWriter
 }
-
 //Launch new routine to app mate read/write stderr
 func NewStderrWriter() io.WriteCloser {
     go func() {
         scanner := bufio.NewScanner(appLog.pipeStderrReader)
         for scanner.Scan() {
-            msg := scanner.Text()
+            msg := scanner.Text()            
             fmt.Println(msg)
             writeInLogFiles(msg)
         }
@@ -149,10 +149,13 @@ func NewStderrWriter() io.WriteCloser {
 
 //Route log message to log files (startup or rotate concidering conffile)
 func writeInLogFiles(msg string) {
+    if appLog.startupFile != nil || appLog.rotateFile != nil {
+        msg = fmt.Sprintf("%s %s\n", time.Now().Format(conf.LogFileFormat), msg)        
+    }  
     if appLog.startupFile != nil {
         if appLog.currentStartupSize < appLog.startupMaxSize {
             appLog.currentStartupSize+=len(msg)
-            appLog.startupFile.WriteString(msg+"\n")
+            appLog.startupFile.WriteString(msg)
         } else {
             appLog.startupFile.WriteString("Reatched maximum size of startup log file\n")
             appLog.startupFile.Close()
@@ -162,7 +165,7 @@ func writeInLogFiles(msg string) {
     if appLog.rotateFile != nil {
         if appLog.currentRotateSize < appLog.rotateMaxSize {
             appLog.currentRotateSize+=len(msg)
-            appLog.rotateFile.WriteString(msg+"\n")
+            appLog.rotateFile.WriteString(msg)
         } else {
             appLog.rotateFile.Close()
             appLog.currentRotateSize = 0

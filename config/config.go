@@ -21,6 +21,7 @@ type Config struct {
     LogDirectory string
     StartupLogSize int
     RotateLogSize int
+    LogFileFormat string
     Dependencies []DependencyConfig
 }
 
@@ -70,6 +71,7 @@ func (config *Config) setDefault() {
     config.LogDirectory = "."
     config.StartupLogSize = 0
     config.RotateLogSize = 0
+    config.LogFileFormat = "2006-01-02 15:04:05.000"
     config.Dependencies = []DependencyConfig{}
 }
 
@@ -85,6 +87,7 @@ func (config *Config) loadConfigUsingEnvVariable() {
     config.LogDirectory = getStringParameter("AMPPILOT_LOGDIRECTORY", config.LogDirectory)
     config.StartupLogSize = getIntParameter("AMPPILOT_STARTUPLOGSIZE", config.StartupLogSize)
     config.RotateLogSize = getIntParameter("AMPPILOT_ROTATELOGSIZE", config.RotateLogSize)
+    config.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", config.LogFileFormat)
     config.Dependencies = getDependencyArrayParameter("DEPENDENCIES", config.Dependencies)
 }
 
