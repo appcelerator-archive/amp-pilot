@@ -1,9 +1,10 @@
 package main
 
-var version string = "1.0.0-3"
 import (
     "appmate"
 )
+
+var version string = "1.0.0-3"
 
 //launch main loop
 func main() {

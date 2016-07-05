@@ -42,6 +42,7 @@ var (
 
 //Main loop
 func Run(version string) {
+    applog.Log("amp-pilog version %v", version)
     conf.LoadConfig()
     applog.InitLog()
     initMate(version)
@@ -77,12 +78,10 @@ func initMate(version string) {
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.StopAtMateStop
     mate.appReady = true
-    displayConfig(version)
+    displayConfig()
 }
 
-func displayConfig(version string) {
-    applog.Log("----------------------------------------------------------------------------")
-    applog.Log("amp-pilog version %v", version)
+func displayConfig() {
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
