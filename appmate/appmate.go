@@ -23,7 +23,6 @@ const KillSafeDuration time.Duration = 30 * time.Second //min of time between tw
 //All app mate related variables
 type appMate struct {
     serviceId string
-    registered bool
     currentPeriod int
     dependenciesReady bool
     appReady bool
@@ -72,7 +71,6 @@ func Run() {
 func initMate() {
     rd := rand.New(rand.NewSource(time.Now().UnixNano()))
     id := rd.Int()
-    mate.registered = false
     mate.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
     mate.dependenciesReady = false
     mate.currentPeriod = conf.StartupCheckPeriod
