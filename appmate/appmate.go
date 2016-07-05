@@ -77,10 +77,10 @@ func initMate(version string) {
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.StopAtMateStop
     mate.appReady = true
-    displayConfig()
+    displayConfig(version)
 }
 
-func displayConfig() {
+func displayConfig(version string) {
     applog.Log("amp-pilog version %v", version)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
