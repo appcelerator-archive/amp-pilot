@@ -1,13 +1,14 @@
-amp-pilot
+###amp-pilot
 
-amp-pilot is launched inside a container controling the start/stopthe application to launch (mate app) and registering it to consul if needed
+amp-pilot is launched inside a container controling the start/stop of the real application (mate app) and registering it to consul if needed
 
 
 ### Features
 
  * Start/restart app mate when its dependencies are ready
- * Stop app mate if during execution a dependency become not ready
- * Register app mate to consul when executed, opionnaly when ready using a script
+ * Stop app mate if during execution a dependency become not ready (optionaly not)
+ * Register app mate to consul when executed, optionaly when ready using a script and de-register when exit
+ * heart-beat application redeay to consul on regular basis with variable speed concidering the application is starting or started and ready.
 
 
 ### Configuration
@@ -42,7 +43,7 @@ If a connfile is used, the env. variable AMPPILOT_CONFFILE has to set with the f
     }
 ```
 
-In all cases, if exist, the following environment variables are prioritary for the configuration values:
+Conffile is optional and can do not exist. In all cases, if exist, the following environment variables are prioritary for the configuration values:
 
  * consul: consul addr default=localhost:8500
  * SERVICE_NAME: app mate name, mandatory
@@ -54,6 +55,6 @@ In all cases, if exist, the following environment variables are prioritary for t
  * AMPPILOT_LOGDIRECTORY: log directory, default='.'
  * AMPPILOT_STARTUPLOGSIZE: startup log size (MB), if 0 then no startup logs, default=1
  * AMPPILOT_ROTATELOGSIZE=: rotate log size (MB), if 0 then no rotate logs, default=1
- * AMPPILOT_DEPENDENCIES: dependency names list, if not exist then app mate don't have dependency
+ * DEPENDENCIES: dependency names list, if not exist then app mate don't have dependency
  * AMPPILOT_[Dependency Name]_ONLYATSTARTUP: to specify for the dependency [DependencyName] that it will be needed at startup, but should not stop the app mate if not ready during app mate running. [Dependency_name] should be uppercase and without '-' character as for instance: amp-log-worker -> AMPLOGWORKER
 

@@ -85,7 +85,7 @@ func (config *Config) loadConfigUsingEnvVariable() {
     config.LogDirectory = getStringParameter("AMPPILOT_LOGDIRECTORY", config.LogDirectory)
     config.StartupLogSize = getIntParameter("AMPPILOT_STARTUPLOGSIZE", config.StartupLogSize)
     config.RotateLogSize = getIntParameter("AMPPILOT_ROTATELOGSIZE", config.RotateLogSize)
-    config.Dependencies = getDependencyArrayParameter("AMPPILOT_DEPENDENCIES", config.Dependencies)
+    config.Dependencies = getDependencyArrayParameter("DEPENDENCIES", config.Dependencies)
 }
 
 //Control configutation values, update or exit if critical issue
