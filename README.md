@@ -1,12 +1,13 @@
 ###amp-pilot
 
-amp-pilot is launched inside a container controling the start/stop of the real application (mate app) and registering it to consul if needed
+amp-pilot is launched inside a container controling the start/stop of the real application (mate app) and registering it to consul if needed.
+It avoids an external 
 
 
 ### Features
 
- * Start/restart app mate when its dependencies are ready
- * Stop app mate if during execution a dependency become not ready (optionaly not)
+ * Start/restart app mate when all its dependencies are ready
+ * Stop app mate if during execution a dependency become not ready (optionaly a dependency won't stop the app if it failed during app running)
  * Register app mate to consul when executed, optionaly when ready using a script and de-register when exit
  * heart-beat application redeay to consul on regular basis with variable speed concidering the application is starting or started and ready.
 
@@ -61,20 +62,30 @@ Conffile is optional and can do not exist. In all cases, if exist, the following
 
  ### logs files
 
- optionaly regarding the $AMPPILOT_STARTUPLOGSIZE and $AMPPILOT_ROTATELOGSIZE, amp-pilot creates logs files in $AMPPILOT_LOGDIRECTORY in case of log chain failure
+ 
+ Optionaly amp-pilot creates logs files locally in $AMPPILOT_LOGDIRECTORY in case of global log chain failure
 
- To get this logs, enter the following docker commands: if $AMPPILOT_LOGDIRECTORY=/usr/src/app/log
+ if $AMPPILOT_STARTUPLOGSIZE > 0, then amp-pilot creates a startup.log file containing both amp-pilot and app mate logs until the size of the file reachs $AMPPILOT_STARTUPLOGSIZE MB and then amp-pilot stops to add logs in this file.
 
- * to get the first AMPPILOT_STARTUPLOGSIZE MB of logs
-    * docker exec [container name/id] cat /usr/src/app/log/startup.log
-    * when maximum size of startup.log is reached, amp-pilot stops to write logs in it.
- * to get the last AMPPILOT_ROTATELOGSIZE MB of logs
-    * docker exec [container name/id] cat /usr/src/app/log/current.log
-    * when maximum size of current.log is reached, current.log is moved to previous.log and a new current.log is created
- * to get the previous AMPPILOT_ROTATELOGSIZE MB of logs (just before the current.log ones)
-    * docker exec [container name/id] cat /usr/src/app/log/previous.log
+
+if $AMPPILOT_ROTATELOGSIZE > 0, then amp-pilot create a rotatelogs in current.log and previous.log files containing both amp-pilot and app mate log. It feed first current.log. When the size of current.log reachs $AMPPILOT_ROTATELOGSIZE MB then it moves current.log to previous.log and set current.log empty in order to to continue to store logs
+
+Then with both current.log and previous.log you have up the $AMPPILOT_ROTATELOGSIZE *2 MB of the last logs.
 
 
 
 
+### install
+
+to instal amp-pilot in a alpine container, add these in the Dockerfile:
+
+
+ENV AMPPILOT=1.0.0
+RUN curl -Lo /tmp/amp-pilot.alpine.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot.alpine-$AMPPILOT.tgz
+RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
+
+
+#### future
+
+Handle Docker 1.12 healthcheck 
 
