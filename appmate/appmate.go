@@ -41,10 +41,10 @@ var (
 
 
 //Main loop
-func Run() {
+func Run(version string) {
     conf.LoadConfig()
     applog.InitLog()
-    initMate()
+    initMate(version)
     trapSignal()
     runtime.GOMAXPROCS(4)
     applog.Log("waiting for dependencies...");
@@ -68,7 +68,7 @@ func Run() {
 }
 
 //Set app mate initial values
-func initMate() {
+func initMate(version string) {
     rd := rand.New(rand.NewSource(time.Now().UnixNano()))
     id := rd.Int()
     mate.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
@@ -77,10 +77,12 @@ func initMate() {
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.StopAtMateStop
     mate.appReady = true
-    displayConfig()
+    displayConfig(version)
 }
 
-func displayConfig() {
+func displayConfig(version string) {
+    applog.Log("----------------------------------------------------------------------------")
+    applog.Log("amp-pilog version %v", version)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
