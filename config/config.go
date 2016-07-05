@@ -76,7 +76,7 @@ func (config *Config) setDefault() {
 //Update config with env variables
 func (config *Config) loadConfigUsingEnvVariable() {
     config.Consul = getStringParameter("consul", config.Consul)
-    config.Name = getStringParameter("AMPPILOT_NAME", config.Name)
+    config.Name = getStringParameter("SERVICE_NAME", config.Name)
     config.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", config.Cmd)
     config.CmdReady = getStringParameter("AMPPILOT_READY_CMD", config.CmdReady)
     config.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", config.StartupCheckPeriod)

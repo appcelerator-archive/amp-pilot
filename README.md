@@ -45,7 +45,7 @@ If a connfile is used, the env. variable AMPPILOT_CONFFILE has to set with the f
 In all cases, if exist, the following environment variables are prioritary for the configuration values:
 
  * consul: consul addr default=localhost:8500
- * AMPPILOT_NAME: app mate name, mandatory
+ * SERVICE_NAME: app mate name, mandatory
  * AMPPILOT_LAUNCH_CMD: app mate launch script, mandatory
  * AMPPILOT_READY_CMD: script to check if the app mate is ready, if does't exist then a started app is concidered ready.
  * AMPPILOT_STARTUPCHECKPERIOD: period of dependencies check and consul register at startup, default=1
