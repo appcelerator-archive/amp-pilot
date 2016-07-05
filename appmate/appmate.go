@@ -61,7 +61,7 @@ func Run(version string) {
                 applog.Log("App mate has stopped")
                 os.Exit(0)
             }
-            mate.stopApp = conf.StopAtMateStop
+            mate.stopApp = conf.ApplicationStop
         } 
         time.Sleep(1 * time.Second)
     }
@@ -75,19 +75,19 @@ func initMate(version string) {
     mate.dependenciesReady = false
     mate.currentPeriod = conf.StartupCheckPeriod
     mate.killTime = time.Now().Add(-KillSafeDuration)
-    mate.stopApp = conf.StopAtMateStop
+    mate.stopApp = conf.ApplicationStop
     mate.appReady = true
     displayConfig(version)
 }
 
 func displayConfig(version string) {
-    applog.Log("amp-pilog version %v", version)
+    applog.Log("amp-pilog version: %v", version)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
     applog.Log("App mate name: %v", conf.Name)
     applog.Log("App mate script cmd: %v", conf.Cmd)
-    applog.Log("Stop container at app mate stop: %v", conf.StopAtMateStop)
+    applog.Log("Stop container if app mate stop by itself: %v", conf.ApplicationStop)
     applog.Log("Startup check period: %v sec.", conf.StartupCheckPeriod)
     applog.Log("Check period: %v sec.", conf.CheckPeriod)
     applog.Log("Log directory: %v", conf.LogDirectory)

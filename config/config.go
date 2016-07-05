@@ -17,7 +17,7 @@ type Config struct {
     CmdReady string
     StartupCheckPeriod int
     CheckPeriod int
-    StopAtMateStop bool
+    ApplicationStop bool
     LogDirectory string
     StartupLogSize int
     RotateLogSize int
@@ -66,7 +66,7 @@ func (config *Config) setDefault() {
     config.CmdReady = ""
     config.StartupCheckPeriod = 1
     config.CheckPeriod = 10
-    config.StopAtMateStop = false
+    config.ApplicationStop = false
     config.LogDirectory = "."
     config.StartupLogSize = 0
     config.RotateLogSize = 0
@@ -81,7 +81,7 @@ func (config *Config) loadConfigUsingEnvVariable() {
     config.CmdReady = getStringParameter("AMPPILOT_READY_CMD", config.CmdReady)
     config.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", config.StartupCheckPeriod)
     config.CheckPeriod = getIntParameter("AMPPILOT_CHECKPERIOD", config.CheckPeriod)
-    config.StopAtMateStop = getBoolParameter("AMPPILOT_STOPATMATESTOP", config.StopAtMateStop)
+    config.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", config.ApplicationStop)
     config.LogDirectory = getStringParameter("AMPPILOT_LOGDIRECTORY", config.LogDirectory)
     config.StartupLogSize = getIntParameter("AMPPILOT_STARTUPLOGSIZE", config.StartupLogSize)
     config.RotateLogSize = getIntParameter("AMPPILOT_ROTATELOGSIZE", config.RotateLogSize)
@@ -100,8 +100,13 @@ func (config *Config) controlConfig() {
     }
     _, err := os.Stat(config.LogDirectory) 
     if os.IsNotExist(err) {
-        fmt.Printf("Log directory %v doesn't exist: updated to '.'\n", config.LogDirectory)
-        config.LogDirectory = "./"
+        errd := os.MkdirAll(config.LogDirectory, 0755)
+        if errd == nil {
+            fmt.Printf("Log directory %v didn't exist. It has been created\n", config.LogDirectory)
+        } else {
+            fmt.Printf("Log directory %v doesn't exist: Error creating it: %v'\n", config.LogDirectory, errd)
+            os.Exit(1)
+        }
     }
     if conf.StartupCheckPeriod > conf.CheckPeriod {
         conf.StartupCheckPeriod = conf.CheckPeriod
