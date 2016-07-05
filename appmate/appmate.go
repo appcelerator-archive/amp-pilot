@@ -42,7 +42,6 @@ var (
 
 //Main loop
 func Run(version string) {
-    applog.Log("amp-pilog version %v", version)
     conf.LoadConfig()
     applog.InitLog()
     initMate(version)
@@ -82,6 +81,7 @@ func initMate(version string) {
 }
 
 func displayConfig() {
+    applog.Log("amp-pilog version %v", version)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
