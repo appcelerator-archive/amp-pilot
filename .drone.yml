@@ -5,4 +5,4 @@ build:
   commands:
     - apk-install bash go bzr git mercurial subversion openssh-client ca-certificates
     - mkdir -p /go/src /go/bin && chmod -R 777 /go
-    - go build -o ../bin/amp-pilot
+    - go build -o ../bin/amp-pilot.alpine
