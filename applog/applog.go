@@ -38,13 +38,15 @@ var (
 
 
 //Send log message as app mate stdout
-func Log(msg string) {
-    appLog.pipeStdoutWriter.Write([]byte(msg+"\n"))
+func Log(msg string, arg ...interface{}) {
+    ret := fmt.Sprintf(msg, arg...) 
+    appLog.pipeStdoutWriter.Write([]byte(ret+"\n"))
 }
 
 //Send log message as app mate stderr
-func LogError(msg string) {
-    appLog.pipeStderrWriter.Write([]byte(msg+"\n"))
+func LogError(msg string, arg ...interface{}) {
+    ret := fmt.Sprintf(msg, arg...) 
+    appLog.pipeStderrWriter.Write([]byte(ret+"\n"))
 }
 
 //Close all log files
@@ -137,7 +139,7 @@ func NewStderrWriter() io.WriteCloser {
     go func() {
         scanner := bufio.NewScanner(appLog.pipeStderrReader)
         for scanner.Scan() {
-            msg := "ERROR: "+scanner.Text()
+            msg := scanner.Text()
             fmt.Println(msg)
             writeInLogFiles(msg)
         }

@@ -8,7 +8,6 @@ import (
     "io/ioutil"
     "bytes"
     "applog"
-    "strconv"
 )
 
 //Json format of GET response of consul service health check
@@ -18,12 +17,21 @@ type consulHealth struct {
 }
 
 //Json format of the POST data to register a service on Consul
-type consulRegister struct {
+type consulRegisterService struct {
   ID string
   Name string
   Address string
   Port int
-  ServiceCheck consulCheck
+  //ServiceCheck consulCheck
+}
+
+type consulRegisterCheck struct {
+    ID string
+    Name string
+    Notes string
+    ServiceID string
+    Status string
+    TTL string
 }
 
 //Json format of Check item in the POST data to register a service on Consul
@@ -33,7 +41,9 @@ type consulCheck struct {
 
 var (
     conf *config.Config = config.GetConfig()
+    serviceRegistered bool = false
 )
+
 
 //Check if one dependency is ready using Consul
 func IsDependencyReady(name string) bool {
@@ -55,25 +65,41 @@ func IsDependencyReady(name string) bool {
     return false
 }
 
-//Register app mate onto Consul
-func RegisterApp(id string, name string, currentPoll int) {
-    registerData := consulRegister {
-        ID: id,
-        Name: name,
-        Address: "localhost",
-        Port: 8080,
-        ServiceCheck: consulCheck {
-            TTL: strconv.Itoa(currentPoll * 2) + "s",
-        },
+//Register app mate onto Consul and/or heard-beat
+func RegisterApp(serviceId string, name string, currentPoll int) {
+    if !serviceRegistered {
+        applog.Log("app mate registered")
+        registerDataService := consulRegisterService {
+            ID: serviceId,
+            Name: name,
+            Address: "localhost",
+            Port: 8080,
+            //ServiceCheck: consulCheck {
+            //    TTL: fmt.Sprintf("%ds", currentPoll * 2),
+            //},
+        }
+        payloadServ, _ := json.Marshal(registerDataService)
+        _, err := putJson("http://"+conf.Consul+"/v1/agent/service/register", payloadServ)
+        if err == nil {
+            serviceRegistered=true
+        }
     }
-    payload, _ := json.Marshal(registerData)
-    putJson("http://"+conf.Consul+"/v1/agent/service/register", payload)
+    registerDataCheck := consulRegisterCheck {
+        ID:  serviceId,
+        Name: serviceId,
+        Notes:  fmt.Sprintf("TTL for %s set by amp-pilot", name),
+        ServiceID: serviceId,
+        Status: "passing",
+        TTL: fmt.Sprintf("%ds", currentPoll * 2),
+    }
+    payloadCheck, _ := json.Marshal(registerDataCheck)
+    putJson("http://"+conf.Consul+"/v1/agent/check/register", payloadCheck)   
 }
 
 //De-register app mate onto Consul
-func DeregisterApp(id string) {
-    getJson("http://"+conf.Consul+"/v1/agent/service/deregister/"+id)
-    applog.Log("app de-registered: "+id)
+func DeregisterApp(serviceId string) {
+    getJson("http://"+conf.Consul+"/v1/agent/service/deregister/"+serviceId)
+    getJson("http://"+conf.Consul+"/v1/agent/check/deregister/"+serviceId)
 }
 
 //execute HTTP GET

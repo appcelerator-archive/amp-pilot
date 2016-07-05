@@ -57,7 +57,6 @@ func (config *Config) LoadConfig() {
     }
     config.loadConfigUsingEnvVariable()
     config.controlConfig()
-    config.displayConfig()
 }
 
 //Set default value of configuration
@@ -87,23 +86,6 @@ func (config *Config) loadConfigUsingEnvVariable() {
     config.StartupLogSize = getIntParameter("AMPPILOT_STARTUPLOGSIZE", config.StartupLogSize)
     config.RotateLogSize = getIntParameter("AMPPILOT_ROTATELOGSIZE", config.RotateLogSize)
     config.Dependencies = getDependencyArrayParameter("AMPPILOT_DEPENDENCIES", config.Dependencies)
-}
-
-//Display configuration
-func (config *Config) displayConfig() {
-    fmt.Println("----------------------------------------------------------------------------")
-    fmt.Println("Configuration:")
-    fmt.Printf("Consul addr: %v\n", config.Consul)
-    fmt.Printf("App mate name: %v\n", config.Name)
-    fmt.Printf("App mate script cmd: %v\n", config.Cmd)
-    fmt.Printf("Stop container at app mate stop: %v\n", config.StopAtMateStop)
-    fmt.Printf("Startup check period: %v sec.\n", config.StartupCheckPeriod)
-    fmt.Printf("Check period: %v sec.\n", config.CheckPeriod)
-    fmt.Printf("Log directory: %v\n", config.LogDirectory)
-    fmt.Printf("Startup log size: %v MB\n", config.StartupLogSize)
-    fmt.Printf("Rotate log size: %v MB\n", config.RotateLogSize)
-    fmt.Printf("Dependency names list: %v\n", config.Dependencies)
-    fmt.Println("----------------------------------------------------------------------------")
 }
 
 //Control configutation values, update or exit if critical issue

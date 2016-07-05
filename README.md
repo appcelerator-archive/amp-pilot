@@ -17,30 +17,30 @@ amp-pilot is configurable using either conffile or environment variables or both
 
 If a connfile is used, the env. variable AMPPILOT_CONFFILE has to set with the full conffile path. The conffile is a json as this:
 
-``
-        {
-            "Consul": "localhost:8500",
-            "Name": "test",
-            "Cmd": "./test.sh",
-            "CmdReady": "./checkReady.sh",
-            "StartupCheckPeriod": 1,
-            "CheckPeriod": 5,
-            "StopAtMateStop": false,
-            "LogDirectory": "./log",
-            "StartupLogSize": 0,
-            "RotateLogSize": 0,
-            "Dependencies" : [
-                {
-                    "Name": "name1",
-                    "OnlyAtStartup": false
-                },
-                {
-                    "Name": "name2",
-                    "OnlyAtStartup": false                
-                }
-            ]
-        }
-``
+```
+    {
+        "Consul": "localhost:8500",
+        "Name": "test",
+        "Cmd": "./test.sh",
+        "CmdReady": "./checkReady.sh",
+        "StartupCheckPeriod": 1,
+        "CheckPeriod": 5,
+        "StopAtMateStop": false,
+        "LogDirectory": "./log",
+        "StartupLogSize": 0,
+        "RotateLogSize": 0,
+        "Dependencies" : [
+            {
+                "Name": "name1",
+                "OnlyAtStartup": false
+            },
+            {
+                "Name": "name2",
+                "OnlyAtStartup": false                
+            }
+        ]
+    }
+```
 
 In all cases, if exist, the following environment variables are prioritary for the configuration values:
 

@@ -7,9 +7,9 @@ import (
     "runtime"
     "os"
     "math/rand"
-    "strconv"
     "os/signal"
     "syscall"
+    "strings"
     //amp-pilot package
     "consul"
     "applog"
@@ -22,7 +22,8 @@ const KillSafeDuration time.Duration = 30 * time.Second //min of time between tw
 
 //All app mate related variables
 type appMate struct {
-    id string
+    serviceId string
+    registered bool
     currentPeriod int
     dependenciesReady bool
     appReady bool
@@ -38,6 +39,7 @@ var (
     mate appMate
     conf *config.Config = config.GetConfig()
 )
+
 
 //Main loop
 func Run() {
@@ -56,7 +58,7 @@ func Run() {
             mate.appReady=false
             mate.currentPeriod = conf.StartupCheckPeriod
             if mate.stopApp {
-                consul.DeregisterApp(mate.id)
+                consul.DeregisterApp(mate.serviceId)
                 applog.Log("App mate has stopped")
                 os.Exit(0)
             }
@@ -69,12 +71,32 @@ func Run() {
 //Set app mate initial values
 func initMate() {
     rd := rand.New(rand.NewSource(time.Now().UnixNano()))
-    mate.id=conf.Name+"_"+strconv.Itoa(rd.Int())
+    id := rd.Int()
+    mate.registered = false
+    mate.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
     mate.dependenciesReady = false
     mate.currentPeriod = conf.StartupCheckPeriod
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.StopAtMateStop
     mate.appReady = true
+    displayConfig()
+}
+
+func displayConfig() {
+    applog.Log("----------------------------------------------------------------------------")
+    applog.Log("Configuration:")
+    applog.Log("Consul addr: %v", conf.Consul)
+    applog.Log("App mate name: %v", conf.Name)
+    applog.Log("App mate script cmd: %v", conf.Cmd)
+    applog.Log("Stop container at app mate stop: %v", conf.StopAtMateStop)
+    applog.Log("Startup check period: %v sec.", conf.StartupCheckPeriod)
+    applog.Log("Check period: %v sec.", conf.CheckPeriod)
+    applog.Log("Log directory: %v", conf.LogDirectory)
+    applog.Log("Startup log size: %v MB", conf.StartupLogSize)
+    applog.Log("Rotate log size: %v MB", conf.RotateLogSize)
+    applog.Log("Dependency names list: %v", conf.Dependencies)
+    applog.Log("Service instance id: "+mate.serviceId)
+    applog.Log("----------------------------------------------------------------------------")
 }
 
 //Launch a routine to catch SIGTERM Signal
@@ -88,7 +110,7 @@ func trapSignal() {
         if isAppLaunched() {    
             stopApp()
         }
-        consul.DeregisterApp(mate.id)
+        consul.DeregisterApp(mate.serviceId)
         applog.CloseFiles()
         os.Exit(1)
     }()
@@ -128,7 +150,9 @@ func isAppReady() bool {
     if conf.CmdReady == "" {
         return true
     }
-    cmd := exec.Command(conf.CmdReady)
+    applog.Log("execute: "+conf.CmdReady)
+    cmdList := strings.Split(conf.CmdReady, " ")[:]
+    cmd := exec.Command(cmdList[0], cmdList[1:]...)
     err := cmd.Run()
     if err != nil {
     fmt.Println("app mate not ready: "+conf.CmdReady+" throw error=", err)
@@ -141,7 +165,8 @@ func isAppReady() bool {
 //Launch the app mate usin conffile cmd command
 func executeApp() {
     applog.Log("execute: "+conf.Cmd);
-    mate.app = exec.Command(conf.Cmd)
+    cmdList := strings.Split(conf.Cmd, " ")[:]
+    mate.app = exec.Command(cmdList[0], cmdList[1:]...)
     //mate.App.Stdout = os.Stdout
     //mate.App.Stderr = os.Stderr
     mate.app.Stderr = applog.GetPipeStderrWriter()
@@ -181,7 +206,7 @@ func isAppLaunched() bool {
 func checkForDependenciesAndReadyness() {
     launched := isAppLaunched()
     if launched && mate.appReady {
-        consul.RegisterApp(mate.id, conf.Name, conf.CheckPeriod)
+        consul.RegisterApp(mate.serviceId, conf.Name, conf.CheckPeriod)
     }
     mate.dependenciesReady = checkDependencies(launched)
     if mate.dependenciesReady {
