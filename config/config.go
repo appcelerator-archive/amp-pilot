@@ -79,7 +79,8 @@ func (config *Config) setDefault() {
     config.RotateLogSize = 0
     config.LogFileFormat = "2006-01-02 15:04:05.000"
     config.Dependencies = []DependencyConfig{}
-    config.NetInterface="docker0"
+    config.NetInterface="eth0"
+    //displayIp()
 }
 
 //Update config with env variables
@@ -202,3 +203,15 @@ func getServiceIp(netInterface string) string {
     return "127.0.0.1"
 }
 
+
+func displayIp() {
+    list, err := net.Interfaces()
+    if err != nil {
+        fmt.Println("get net interfaces error: ",err)
+        return
+    } 
+    for _, iface := range list {
+        addrs, _ := iface.Addrs()
+        fmt.Printf("interface: %s, ip: %s\n", iface.Name, strings.Split(addrs[0].String(), "/")[0])
+    }
+}

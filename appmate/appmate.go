@@ -80,6 +80,7 @@ func initMate(version string) {
     displayConfig(version)
 }
 
+
 func displayConfig(version string) {
     applog.Log("amp-pilot version: %v", version)
     applog.Log("----------------------------------------------------------------------------")
@@ -87,6 +88,7 @@ func displayConfig(version string) {
     applog.Log("Consul addr: %v", conf.Consul)
     applog.Log("App mate name: %v", conf.Name)
     applog.Log("App mate script cmd: %v", conf.Cmd)
+    applog.Log("App mate script ready cmd: %v", conf.CmdReady)
     applog.Log("Stop container if app mate stop by itself: %v", conf.ApplicationStop)
     applog.Log("Startup check period: %v sec.", conf.StartupCheckPeriod)
     applog.Log("Check period: %v sec.", conf.CheckPeriod)

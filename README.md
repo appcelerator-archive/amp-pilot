@@ -50,7 +50,7 @@ Conffile is optional and can do not exist. In all cases, if exist, the following
  * SERVICE_NAME: app mate name, mandatory
  * AMPPILOT_LAUNCH_CMD: app mate launch script, mandatory
  * AMPPILOT_READY_CMD: script to check if the app mate is ready, if does't exist then a started app is concidered ready.
- * AMPPILOT_NETINTERFACE: the network interface to get the local IP address which has been registered on Consul, default: docker0
+ * AMPPILOT_NETINTERFACE: the network interface to get the local IP address which has been registered on Consul, default: eth0
  * AMPPILOT_REGISTEREDPORT: the port which has going to be register in Consul, default: 80
  * AMPPILOT_STARTUPCHECKPERIOD: period of dependencies check and consul register at startup, default=1
  * AMPPILOT_CHECKPERIOD: period of dependecies check and consul register after startup, default=10
