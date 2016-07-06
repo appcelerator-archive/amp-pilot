@@ -144,7 +144,9 @@ func checkDependencies(appLaunched bool) bool {
             slog+=dep.Name+"=ready "
         } 
     }  
-    applog.Log(slog)
+    if (!ret || !mate.appStarted) {
+        applog.Log(slog)
+    }
     return ret;
 }
 
