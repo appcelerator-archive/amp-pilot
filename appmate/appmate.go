@@ -54,7 +54,7 @@ func Run(version string) {
             mate.currentPeriod = conf.CheckPeriod
             executeApp()
             mate.dependenciesReady = checkDependencies(false)
-            mate.appReady=false
+            mate.appReady = false
             mate.currentPeriod = conf.StartupCheckPeriod
             if mate.stopApp {
                 consul.DeregisterApp(mate.serviceId)
@@ -76,7 +76,7 @@ func initMate(version string) {
     mate.currentPeriod = conf.StartupCheckPeriod
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.ApplicationStop
-    mate.appReady = true
+    mate.appReady = false
     displayConfig(version)
 }
 
