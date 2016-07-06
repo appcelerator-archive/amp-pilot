@@ -7,6 +7,7 @@ import (
     "encoding/json"
     "strconv"
     "strings"
+    "net"
 )
 
 //Json format of conffile
@@ -15,6 +16,8 @@ type Config struct {
     Name string
     Cmd string
     CmdReady string
+    RegisteredIp string
+    RegisteredPort int
     StartupCheckPeriod int
     CheckPeriod int
     ApplicationStop bool
@@ -23,6 +26,7 @@ type Config struct {
     RotateLogSize int
     LogFileFormat string
     Dependencies []DependencyConfig
+    NetInterface string
 }
 
 type DependencyConfig struct {
@@ -57,6 +61,7 @@ func (config *Config) LoadConfig() {
         }
     }
     config.loadConfigUsingEnvVariable()
+    config.RegisteredIp = getServiceIp(config.NetInterface)
     config.controlConfig()
 }
 
@@ -65,6 +70,7 @@ func (config *Config) setDefault() {
     config.Consul = "consul:8500"
     config.Name = "unknown"
     config.CmdReady = ""
+    config.RegisteredPort = 80
     config.StartupCheckPeriod = 1
     config.CheckPeriod = 10
     config.ApplicationStop = false
@@ -73,6 +79,7 @@ func (config *Config) setDefault() {
     config.RotateLogSize = 0
     config.LogFileFormat = "2006-01-02 15:04:05.000"
     config.Dependencies = []DependencyConfig{}
+    config.NetInterface="docker0"
 }
 
 //Update config with env variables
@@ -81,6 +88,8 @@ func (config *Config) loadConfigUsingEnvVariable() {
     config.Name = getStringParameter("SERVICE_NAME", config.Name)
     config.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", config.Cmd)
     config.CmdReady = getStringParameter("AMPPILOT_READY_CMD", config.CmdReady)
+    config.NetInterface = getStringParameter("AMPPILOT_NETINTERFACE", config.NetInterface)
+    config.RegisteredPort = getIntParameter("AMPPILOT_REGISTEREDPORT", config.RegisteredPort)
     config.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", config.StartupCheckPeriod)
     config.CheckPeriod = getIntParameter("AMPPILOT_CHECKPERIOD", config.CheckPeriod)
     config.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", config.ApplicationStop)
@@ -172,5 +181,24 @@ func getDependencyArrayParameter(envVariableName string, def []DependencyConfig)
         } 
     }
     return ret
+}
+
+func getServiceIp(netInterface string) string {
+    list, err := net.Interfaces()
+    if err != nil {
+        fmt.Println("get net interfaces error: ",err)
+        return "127.0.0.1"
+    } 
+    for _, iface := range list {
+        if (iface.Name == netInterface) {
+            addrs, err := iface.Addrs()
+            if err != nil || len(addrs) == 0 {
+                fmt.Printf("get ip for net interfaces %s error: %v\n", netInterface, err)
+                return "127.0.0.1"
+            }
+            return strings.Split(addrs[0].String(), "/")[0]
+        }
+    }
+    return "127.0.0.1"
 }
 

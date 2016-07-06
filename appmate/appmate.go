@@ -95,6 +95,8 @@ func displayConfig(version string) {
     applog.Log("Rotate log size: %v MB", conf.RotateLogSize)
     applog.Log("Dependency names list: %v", conf.Dependencies)
     applog.Log("Service instance id: "+mate.serviceId)
+    applog.Log("Service registered IP: %s (on interface: %s)", conf.RegisteredIp, conf.NetInterface)
+    applog.Log("Service registered Port: %v",conf.RegisteredPort)
     applog.Log("----------------------------------------------------------------------------")
 }
 

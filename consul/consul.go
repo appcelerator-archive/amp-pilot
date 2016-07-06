@@ -18,10 +18,10 @@ type consulHealth struct {
 
 //Json format of the POST data to register a service on Consul
 type consulRegisterService struct {
-  ID string
-  Name string
-  Address string
-  Port int
+    ID string
+    Name string
+    Address string
+    Port int
   //ServiceCheck consulCheck
 }
 
@@ -72,8 +72,8 @@ func RegisterApp(serviceId string, name string, currentPoll int) {
         registerDataService := consulRegisterService {
             ID: serviceId,
             Name: name,
-            Address: "localhost",
-            Port: 8080,
+            Address: conf.RegisteredIp,
+            Port: conf.RegisteredPort,
             //ServiceCheck: consulCheck {
             //    TTL: fmt.Sprintf("%ds", currentPoll * 2),
             //},
