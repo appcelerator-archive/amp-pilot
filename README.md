@@ -71,7 +71,7 @@ Conffile is optional and can do not exist. In all cases, the following environme
  ### logs files
 
  
- Optionaly amp-pilot creates logs files locally in $AMPPILOT_LOGDIRECTORY. It allows to have a way to get application logs in case of global amp log chain failure.
+ Optionaly amp-pilot creates logs files locally in $AMPPILOT_LOGDIRECTORY. It allows to have a way to get application logs in case of global amp log chain failure (especially for the services which are part of the global chain log)
 
  if $AMPPILOT_STARTUPLOGSIZE > 0, then amp-pilot creates a startup.log file containing both amp-pilot and app mate logs until the size of the file reachs $AMPPILOT_STARTUPLOGSIZE MB and then amp-pilot stops to add logs in this file.
 
