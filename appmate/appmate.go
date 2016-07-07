@@ -76,7 +76,7 @@ func initMate(version string) {
     mate.currentPeriod = conf.StartupCheckPeriod
     mate.killTime = time.Now().Add(-KillSafeDuration)
     mate.stopApp = conf.ApplicationStop
-    mate.appReady = false
+    mate.isAppReadyady = false
     displayConfig(version)
 }
 
