@@ -11,6 +11,8 @@ A set of applications using amp-pilot wait themself that their dependencies (oth
  * Register app mate to consul just after startup (optionaly after executing a script to check if the app is really ready).
  * De-register when exit (SIGTERM recevied by amp-pilot is routed to app mate to make it stop)
  * heart-beat 'application ready' to consul on regular basis with variable speed concidering the application is starting or started and ready.
+ * optionnally, write a given size of the application first logs in a local container file
+ * optionnally, write a given size of the application last logs in a local container file
 
 
 ### Configuration
@@ -69,7 +71,7 @@ Conffile is optional and can do not exist. In all cases, the following environme
  ### logs files
 
  
- Optionaly amp-pilot creates logs files locally in $AMPPILOT_LOGDIRECTORY. It allows to have a way to get application logs in case of global log chain failure
+ Optionaly amp-pilot creates logs files locally in $AMPPILOT_LOGDIRECTORY. It allows to have a way to get application logs in case of global amp log chain failure.
 
  if $AMPPILOT_STARTUPLOGSIZE > 0, then amp-pilot creates a startup.log file containing both amp-pilot and app mate logs until the size of the file reachs $AMPPILOT_STARTUPLOGSIZE MB and then amp-pilot stops to add logs in this file.
 
