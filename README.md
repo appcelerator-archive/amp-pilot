@@ -60,7 +60,7 @@ Conffile is optional and can do not exist. In all cases, the following environme
  * AMPPILOT_STARTUPCHECKPERIOD: period of dependencies checking and consul heartbeat at startup, default=1 second
  * AMPPILOT_CHECKPERIOD: period of dependencies checking and consul heartbeat after startup, default=10 seconds
  * AMPPILOT_STOPATMATESTOP: stop the container if the app mate stop by it-self, default=false
- * AMPPILOT_LOGDIRECTORY: log directory, default='.'
+ * AMPPILOT_LOGDIRECTORY: log directory, default='./log'
  * AMPPILOT_STARTUPLOGSIZE: startup log size (MB), if 0 then no startup logs, default=1 MB
  * AMPPILOT_ROTATELOGSIZE: rotate log size (MB), if 0 then no rotate logs, default=1 MB
  * AMPPILOT_LOGFILEFORMAT: log time format for logs written in local files, based on time.Format (package time), default "2006-01-02 15:04:05.000"

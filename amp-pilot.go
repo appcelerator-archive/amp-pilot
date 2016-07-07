@@ -4,7 +4,7 @@ import (
     "appmate"
 )
 
-var version string = "1.0.0-4"
+var version string = "1.0.0-5"
 
 //launch main loop
 func main() {

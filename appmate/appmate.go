@@ -80,7 +80,7 @@ func initMate(version string) {
     displayConfig(version)
 }
 
-
+//display amp-pilot configuration
 func displayConfig(version string) {
     applog.Log("amp-pilot version: %v", version)
     applog.Log("----------------------------------------------------------------------------")
@@ -95,7 +95,7 @@ func displayConfig(version string) {
     applog.Log("Log directory: %v", conf.LogDirectory)
     applog.Log("Startup log size: %v MB", conf.StartupLogSize)
     applog.Log("Rotate log size: %v MB", conf.RotateLogSize)
-    applog.Log("Dependency names list: %v", conf.Dependencies)
+    applog.Log("Dependency list {name, onlyAtStartup}: %v", conf.Dependencies)
     applog.Log("Service instance id: "+mate.serviceId)
     applog.Log("Service registered IP: %s (on interface: %s)", conf.RegisteredIp, conf.NetInterface)
     applog.Log("Service registered Port: %v",conf.RegisteredPort)
@@ -121,15 +121,18 @@ func trapSignal() {
 
 //Check if all dependencies are ready
 func checkDependencies(appLaunched bool) bool {
+    //no dependency case
     if len(conf.Dependencies) == 0 {
         return true
     }
     var slog string = "check dependencies: "
+    //after an application kill, there is a safe period during which the application shouldn't be restarted (even if all its dependencies are ready)
     if !mate.killTime.Add(KillSafeDuration).Before(time.Now()) {
         slog+=" not ready (kill safe period)"
         applog.Log(slog)
         return false    
     }
+    //Check dependencies
     var ret bool = true
     for ii := 0; ii < len(conf.Dependencies); ii++ {
         dep := conf.Dependencies[ii]
@@ -144,7 +147,7 @@ func checkDependencies(appLaunched bool) bool {
             slog+=dep.Name+"=ready "
         } 
     }  
-    if (!ret || !mate.appStarted) {
+    if (!ret || !mate.appStarted) { //to do not be too much verbose, don't log if app is started, excepted if there is a dependency failure
         applog.Log(slog)
     }
     return ret;
@@ -160,8 +163,8 @@ func isAppReady() bool {
     cmd := exec.Command(cmdList[0], cmdList[1:]...)
     err := cmd.Run()
     if err != nil {
-    applog.Log("app mate not ready: "+conf.CmdReady+" throw error=", err)
-     return false  
+        applog.Log("app mate not ready: "+conf.CmdReady+" throw error=", err)
+        return false  
     }
     applog.Log("app mate ready: "+conf.CmdReady+" return code 0")
     return true
@@ -172,8 +175,6 @@ func executeApp() {
     applog.Log("execute: "+conf.Cmd);
     cmdList := strings.Split(conf.Cmd, " ")[:]
     mate.app = exec.Command(cmdList[0], cmdList[1:]...)
-    //mate.App.Stdout = os.Stdout
-    //mate.App.Stderr = os.Stderr
     mate.app.Stderr = applog.GetPipeStderrWriter()
     mate.app.Stdout = applog.GetPipeStdoutWriter()
     mate.appStarted = true
@@ -196,7 +197,7 @@ func stopApp() {
 func isAppLaunched() bool {
     return mate.appStarted
     /*
-    //Don't work correctly:
+    //Don't work correctly and actually not needed.TODO: supress function isAppLaunched, mate.addStarted if enough
     if mate.app == nil {
         return false
     }
@@ -207,7 +208,7 @@ func isAppLaunched() bool {
     */
 }
 
-//Check dependencies, register if app mate is started and ready, stop app if a dependency is not ready
+//Check dependencies and register if app mate is started and ready, stop app if a dependency is not ready
 func checkForDependenciesAndReadyness() {
     launched := isAppLaunched()
     if launched && mate.appReady {
@@ -226,7 +227,7 @@ func checkForDependenciesAndReadyness() {
     }
 }
 
-//laucnh routine to check (register/dependencies) on regular basis and be able to change its period dynamically
+//laucnh routine to check dependencies and register on regular basis and be able to change its period dynamically
 func startPeriodicChecking() {
     go func() {
         for {

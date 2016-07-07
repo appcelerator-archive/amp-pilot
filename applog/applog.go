@@ -38,13 +38,13 @@ var (
 )
 
 
-//Send log message as app mate stdout
+//Send log message as if was an app mate stdout
 func Log(msg string, arg ...interface{}) {
     ret := fmt.Sprintf(msg, arg...) 
     appLog.pipeStdoutWriter.Write([]byte(ret+"\n"))
 }
 
-//Send log message as app mate stderr
+//Send log message as it was an app mate stderr
 func LogError(msg string, arg ...interface{}) {
     ret := fmt.Sprintf(msg, arg...) 
     appLog.pipeStderrWriter.Write([]byte(ret+"\n"))
@@ -134,6 +134,7 @@ func NewStdoutWriter() io.WriteCloser {
     }()
     return appLog.pipeStdoutWriter
 }
+
 //Launch new routine to app mate read/write stderr
 func NewStderrWriter() io.WriteCloser {
     go func() {

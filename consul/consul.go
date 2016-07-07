@@ -98,6 +98,7 @@ func RegisterApp(serviceId string, name string, currentPoll int) {
 
 //De-register app mate onto Consul
 func DeregisterApp(serviceId string) {
+    serviceRegistered = false
     getJson("http://"+conf.Consul+"/v1/agent/service/deregister/"+serviceId)
     getJson("http://"+conf.Consul+"/v1/agent/check/deregister/"+serviceId)
 }

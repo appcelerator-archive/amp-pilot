@@ -74,11 +74,11 @@ func (config *Config) setDefault() {
     config.StartupCheckPeriod = 1
     config.CheckPeriod = 10
     config.ApplicationStop = false
-    config.LogDirectory = "."
+    config.LogDirectory = "./log"
     config.StartupLogSize = 0
     config.RotateLogSize = 0
     config.LogFileFormat = "2006-01-02 15:04:05.000"
-    config.Dependencies = []DependencyConfig{}
+    config.Dependencies = make([]DependencyConfig, 0)
     config.NetInterface="eth0"
     //displayIp()
 }
@@ -126,7 +126,7 @@ func (config *Config) controlConfig() {
     }
 }
 
-//return env variable value if empty return default value
+//return env variable value, if empty return default value
 func getStringParameter(envVariableName string, def string) string {
     value := os.Getenv(envVariableName)
     if value == "" {
@@ -135,7 +135,7 @@ func getStringParameter(envVariableName string, def string) string {
     return value;
 }
 
-//return env variable value convert to bool if empty return default value
+//return env variable value convert to bool, if empty return default value
 func getBoolParameter(envVariableName string, def bool) bool {
     value := os.Getenv(envVariableName)
     if value == "" {
@@ -147,7 +147,7 @@ func getBoolParameter(envVariableName string, def bool) bool {
     return false;
 }
 
-//return env variable value convert to int if empty return default value
+//return env variable value convert to int, if empty return default value
 func getIntParameter(envVariableName string, def int) int {
     value := os.Getenv(envVariableName)
     if value != "" {
@@ -161,15 +161,12 @@ func getIntParameter(envVariableName string, def int) int {
     }
 }
 
-//return env variable value convert to string array if empty return default value
+//return env variable value convert to string array, if empty return default value
 func getDependencyArrayParameter(envVariableName string, def []DependencyConfig) []DependencyConfig {
     value := os.Getenv(envVariableName)
     if value == "" {
         return def
     } 
-    if value == "" {
-        return make([]DependencyConfig, 0)
-    }
     list := strings.Split( strings.Replace(value," ","", -1), ",")
     ret := make([]DependencyConfig, len(list))
     for ii := 0; ii < len(list); ii++ {
@@ -184,6 +181,7 @@ func getDependencyArrayParameter(envVariableName string, def []DependencyConfig)
     return ret
 }
 
+//get the ip address corresponding to the configured net interface
 func getServiceIp(netInterface string) string {
     list, err := net.Interfaces()
     if err != nil {
@@ -203,7 +201,7 @@ func getServiceIp(netInterface string) string {
     return "127.0.0.1"
 }
 
-
+//for debug: display the list of all interface with the first ip address
 func displayIp() {
     list, err := net.Interfaces()
     if err != nil {
