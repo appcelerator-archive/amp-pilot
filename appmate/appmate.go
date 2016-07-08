@@ -44,6 +44,11 @@ var (
 func Run(version string) {
     conf.LoadConfig()
     applog.InitLog()
+    if conf.Consul == "" {
+        fmt.Println("Consul address is not defined: application is launched")
+        executeApp()
+        os.Exit(0)    
+    }
     initMate(version)
     trapSignal()
     runtime.GOMAXPROCS(4)

@@ -67,7 +67,7 @@ func (config *Config) LoadConfig() {
 
 //Set default value of configuration
 func (config *Config) setDefault() {
-    config.Consul = "consul:8500"
+    config.Consul = ""
     config.Name = "unknown"
     config.CmdReady = ""
     config.RegisteredPort = 80
