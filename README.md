@@ -51,7 +51,7 @@ If a connfile is used, the env. variable AMPPILOT_CONFFILE has to set with the f
 
 Conffile is optional and can do not exist. In all cases, the following environment variables are prioritary for the configuration values:
 
- * consul: consul addr, if this variable does'nt exist, the application is launched directly as amp-pilot do not exist
+ * CONSUL: consul addr, if this variable does'nt exist, the application is launched directly as amp-pilot do not exist
  * SERVICE_NAME: app mate name, mandatory
  * AMPPILOT_LAUNCH_CMD: app mate launch script, mandatory
  * AMPPILOT_READY_CMD: script to check if the app mate is ready, if does't exist then a started app is concidered ready.
