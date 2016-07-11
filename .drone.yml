@@ -5,6 +5,6 @@ build:
   commands:
     - apk-install bash go bzr git mercurial subversion openssh-client ca-certificates
     - mkdir -p /go/src /go/bin && chmod -R 777 /go
-    - cd /go/src
-    - git clone git@github.com:appcelerator/amp-pilot.git
-    - cd /go/src/amp-pilot && go build -o /go/bin/amp-pilot.alpine
+    - mkdir -p /go/src/amp-pilot
+    - cd /go/src/amp-pilot && git clone git@github.com:appcelerator/amp-pilot.git && mv amp-pilot src
+    - cd /go/src/amp-pilot/src && go build -o /go/bin/amp-pilot.alpine
