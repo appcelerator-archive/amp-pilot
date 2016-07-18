@@ -1,0 +1,4 @@
+package: github.com/appcelerator/amp-pilot
+import:
+- package: github.com/Shopify/sarama
+- package: github.com/davecgh/go-spew/spew

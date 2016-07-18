@@ -1,12 +1,11 @@
 package main
 
 import (
-    "appmate"
+    "github.com/appcelerator/amp-pilot/core"
 )
 
-var version string = "1.0.1-0"
+const version string = "1.0.1-0"
 
-//launch main loop
 func main() {
-    appmate.Run(version)
+    core.Run(version)
 }

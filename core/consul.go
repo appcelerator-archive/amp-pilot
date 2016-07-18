@@ -1,13 +1,11 @@
-package consul
+package core
 
 import (
     "fmt"
     "encoding/json"
-    "config"
     "net/http"
     "io/ioutil"
     "bytes"
-    "applog"
 )
 
 //Json format of GET response of consul service health check
@@ -39,15 +37,15 @@ type consulCheck struct {
     TTL string
 }
 
-var (
-    conf *config.Config = config.GetConfig()
-    serviceRegistered bool = false
-)
+type Consul struct {
+    serviceRegistered bool 
+}
 
+var consul Consul
 
 //Check if one dependency is ready using Consul
-func IsDependencyReady(name string) bool {
-    data, err := getJson("http://"+conf.Consul+"/v1/health/checks/"+name)
+func (self *Consul) IsDependencyReady(name string) bool {
+    data, err := self.getJson("http://"+conf.Consul+"/v1/health/checks/"+name)
     if err != nil {
         return false
     }
@@ -66,9 +64,9 @@ func IsDependencyReady(name string) bool {
 }
 
 //Register app mate onto Consul and/or heard-beat
-func RegisterApp(serviceId string, name string, currentPoll int) {
-    if !serviceRegistered {
-        applog.Log("app mate registered")
+func (self *Consul) RegisterApp(serviceId string, name string, currentPoll int) {
+    if !self.serviceRegistered {
+        //applog.Log("app mate registered")
         registerDataService := consulRegisterService {
             ID: serviceId,
             Name: name,
@@ -79,9 +77,9 @@ func RegisterApp(serviceId string, name string, currentPoll int) {
             //},
         }
         payloadServ, _ := json.Marshal(registerDataService)
-        _, err := putJson("http://"+conf.Consul+"/v1/agent/service/register", payloadServ)
+        _, err := self.putJson("http://"+conf.Consul+"/v1/agent/service/register", payloadServ)
         if err == nil {
-            serviceRegistered=true
+            self.serviceRegistered=true
         }
     }
     registerDataCheck := consulRegisterCheck {
@@ -93,18 +91,18 @@ func RegisterApp(serviceId string, name string, currentPoll int) {
         TTL: fmt.Sprintf("%ds", currentPoll * 2),
     }
     payloadCheck, _ := json.Marshal(registerDataCheck)
-    putJson("http://"+conf.Consul+"/v1/agent/check/register", payloadCheck)   
+    self.putJson("http://"+conf.Consul+"/v1/agent/check/register", payloadCheck)   
 }
 
 //De-register app mate onto Consul
-func DeregisterApp(serviceId string) {
-    serviceRegistered = false
-    getJson("http://"+conf.Consul+"/v1/agent/service/deregister/"+serviceId)
-    getJson("http://"+conf.Consul+"/v1/agent/check/deregister/"+serviceId)
+func (self *Consul) DeregisterApp(serviceId string) {
+    self.serviceRegistered = false
+    self.getJson("http://"+conf.Consul+"/v1/agent/service/deregister/"+serviceId)
+    self.getJson("http://"+conf.Consul+"/v1/agent/check/deregister/"+serviceId)
 }
 
 //execute HTTP GET
-func getJson(url string) ([]byte, error) {
+func (self *Consul) getJson(url string) ([]byte, error) {
     r, err := http.Get(url)
     if err != nil {
         return nil, err
@@ -118,7 +116,7 @@ func getJson(url string) ([]byte, error) {
 }
 
 //Execute HTTP PUT
-func putJson(url string, payload []byte) ([]byte, error) {
+func (self *Consul) putJson(url string, payload []byte) ([]byte, error) {
     var jsonStr = []byte(payload)
     req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonStr))
     req.Header.Set("Content-Type", "application/json")
@@ -126,8 +124,8 @@ func putJson(url string, payload []byte) ([]byte, error) {
     client := &http.Client{}
     resp, err := client.Do(req)
     if err != nil {
-        msg := fmt.Sprintf("%s", err, "string")
-        applog.LogError(msg)
+        //msg := fmt.Sprintf("%s", err, "string")
+        //applog.LogError(msg)
         return nil, err
     }
     defer resp.Body.Close()

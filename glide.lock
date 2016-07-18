@@ -1,0 +1,29 @@
+hash: 3a83975f102e0e1e873c32975fd41481ac7a2af7fb46df4fd3b19fdc9dfa04f3
+updated: 2016-07-14T14:58:39.103418949+02:00
+imports:
+- name: github.com/appcelerator/amp-pilot
+  version: f45830a002218d54d58dac893ac5bf4c74e6a1c6
+  subpackages:
+  - applog
+  - config
+  - consul
+  - kafka
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/eapache/go-resiliency
+  version: b86b1ec0dd4209a588dc1285cdd471e73525c0b3
+  subpackages:
+  - breaker
+- name: github.com/eapache/go-xerial-snappy
+  version: bb955e01b9346ac19dc29eb16586c90ded99a98c
+- name: github.com/eapache/queue
+  version: ded5959c0d4e360646dc9e9908cff48666781367
+- name: github.com/golang/snappy
+  version: d9eb7a3d35ec988b8585d4a0068e462c27d28380
+- name: github.com/klauspost/crc32
+  version: 19b0b332c9e4516a6370a0456e6182c3b5036720
+- name: github.com/Shopify/sarama
+  version: 7fbb591e578ef78a88ed72f3ea7156a086a680be
+testImports: []

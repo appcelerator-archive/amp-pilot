@@ -1,4 +1,4 @@
-package config
+package core
 
 import (
     "os"
@@ -11,7 +11,7 @@ import (
 )
 
 //Json format of conffile
-type Config struct {
+type PilotConfig struct {
     Consul string
     Name string
     Cmd string
@@ -21,12 +21,14 @@ type Config struct {
     StartupCheckPeriod int
     CheckPeriod int
     ApplicationStop bool
-    LogDirectory string
-    StartupLogSize int
-    RotateLogSize int
     LogFileFormat string
     Dependencies []DependencyConfig
     NetInterface string
+    Kafka string
+    KafkaTopic string
+    //updated by amp-pilot
+    Host string
+    ContainerId string
 }
 
 type DependencyConfig struct {
@@ -34,92 +36,76 @@ type DependencyConfig struct {
     OnlyAtStartup bool
 }
 
-var conf Config
-
-func GetConfig() *Config {
-    return &conf
-}
+var conf PilotConfig
 
 //Load Json conffile and instanciate new Config
-func (config *Config) LoadConfig() {
-    config.setDefault()
+func (self *PilotConfig) load() {
+    self.setDefault()
     conffile := os.Getenv("AMPPILOT_CONFFILE") 
     if conffile != "" {
         fmt.Println("Pilot conffile "+conffile+":")
         data, err := ioutil.ReadFile(conffile)
         if err != nil {
-            msg := fmt.Sprintf("Conffile read error: %v", err)
-            //TODO: save in default startup log file
-            fmt.Println(msg)
+            applog.Log("Conffile read error: %v", err)
         } else {
-            if err := json.Unmarshal(data, config); err != nil {
-                mgs := fmt.Sprintf("Conffile json parsing error: %v", err)
-                //TODO: save in default startup log file
-                fmt.Println(mgs)
+            if err := json.Unmarshal(data, conf); err != nil {
+                applog.Log("Conffile json parsing error: %v", err)
                 os.Exit(1)
             }
         }
     }
-    config.loadConfigUsingEnvVariable()
-    config.RegisteredIp = getServiceIp(config.NetInterface)
-    config.controlConfig()
+    self.loadConfigUsingEnvVariable()
+    self.RegisteredIp = getServiceIp(self.NetInterface)
+    self.controlConfig()
 }
 
 //Set default value of configuration
-func (config *Config) setDefault() {
-    config.Consul = ""
-    config.Name = "unknown"
-    config.CmdReady = ""
-    config.RegisteredPort = 80
-    config.StartupCheckPeriod = 1
-    config.CheckPeriod = 10
-    config.ApplicationStop = false
-    config.LogDirectory = "./log"
-    config.StartupLogSize = 0
-    config.RotateLogSize = 0
-    config.LogFileFormat = "2006-01-02 15:04:05.000"
-    config.Dependencies = make([]DependencyConfig, 0)
-    config.NetInterface="eth0"
+func (self *PilotConfig) setDefault() {
+    self.Consul = ""
+    self.Name = "unknown"
+    self.CmdReady = ""
+    self.RegisteredPort = 80
+    self.StartupCheckPeriod = 1
+    self.CheckPeriod = 10
+    self.ApplicationStop = false
+    self.LogFileFormat = "2006-01-02 15:04:05.000"
+    self.Dependencies = make([]DependencyConfig, 0)
+    self.NetInterface="eth0"
+    self.Kafka=""
+    self.KafkaTopic="amp-logs"
+    host, err := os.Hostname()
+    if err == nil {
+        self.Host = host
+    } else {
+        self.Host = ""
+    }
+    self.ContainerId = ""
     //displayIp()
 }
 
 //Update config with env variables
-func (config *Config) loadConfigUsingEnvVariable() {
-    config.Consul = getStringParameter("CONSUL", config.Consul)
-    config.Name = getStringParameter("SERVICE_NAME", config.Name)
-    config.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", config.Cmd)
-    config.CmdReady = getStringParameter("AMPPILOT_READY_CMD", config.CmdReady)
-    config.NetInterface = getStringParameter("AMPPILOT_NETINTERFACE", config.NetInterface)
-    config.RegisteredPort = getIntParameter("AMPPILOT_REGISTEREDPORT", config.RegisteredPort)
-    config.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", config.StartupCheckPeriod)
-    config.CheckPeriod = getIntParameter("AMPPILOT_CHECKPERIOD", config.CheckPeriod)
-    config.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", config.ApplicationStop)
-    config.LogDirectory = getStringParameter("AMPPILOT_LOGDIRECTORY", config.LogDirectory)
-    config.StartupLogSize = getIntParameter("AMPPILOT_STARTUPLOGSIZE", config.StartupLogSize)
-    config.RotateLogSize = getIntParameter("AMPPILOT_ROTATELOGSIZE", config.RotateLogSize)
-    config.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", config.LogFileFormat)
-    config.Dependencies = getDependencyArrayParameter("DEPENDENCIES", config.Dependencies)
+func (self *PilotConfig) loadConfigUsingEnvVariable() {
+    self.Consul = getStringParameter("CONSUL", self.Consul)
+    self.Name = getStringParameter("SERVICE_NAME", self.Name)
+    self.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", self.Cmd)
+    self.CmdReady = getStringParameter("AMPPILOT_READY_CMD", self.CmdReady)
+    self.NetInterface = getStringParameter("AMPPILOT_NETINTERFACE", self.NetInterface)
+    self.RegisteredPort = getIntParameter("AMPPILOT_REGISTEREDPORT", self.RegisteredPort)
+    self.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", self.StartupCheckPeriod)
+    self.CheckPeriod = getIntParameter("AMPPILOT_CHECKPERIOD", self.CheckPeriod)
+    self.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", self.ApplicationStop)
+    self.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", self.LogFileFormat)
+    self.Dependencies = getDependencyArrayParameter("DEPENDENCIES", self.Dependencies)
+    self.Kafka = getStringParameter("KAFKA", self.Kafka)
+    self.KafkaTopic = getStringParameter("KAFKA_TOPIC", self.KafkaTopic)
+    self.ContainerId = getStringParameter("HOSTNAME", self.ContainerId)
 }
 
 //Control configutation values, update or exit if critical issue
-func (config *Config) controlConfig() {
-    if config.Cmd == "" {
-        //TODO: save in default startup log file
-        fmt.Println("Config error: Cmd is mandatory")
+func (self *PilotConfig) controlConfig() {
+    if self.Cmd == "" {
+        applog.Log("Config error: Cmd is mandatory")
         os.Exit(1) 
-    }
-    if !strings.HasSuffix(config.LogDirectory, "/") {
-        config.LogDirectory+="/"
-    }
-    _, err := os.Stat(config.LogDirectory) 
-    if os.IsNotExist(err) {
-        errd := os.MkdirAll(config.LogDirectory, 0755)
-        if errd == nil {
-            fmt.Printf("Log directory %v didn't exist. It has been created\n", config.LogDirectory)
-        } else {
-            fmt.Printf("Log directory %v doesn't exist: Error creating it: %v'\n", config.LogDirectory, errd)
-            os.Exit(1)
-        }
     }
     if conf.StartupCheckPeriod > conf.CheckPeriod {
         conf.StartupCheckPeriod = conf.CheckPeriod
@@ -203,13 +189,16 @@ func getServiceIp(netInterface string) string {
 
 //for debug: display the list of all interface with the first ip address
 func displayIp() {
+    applog.Log("Ip list: ")
     list, err := net.Interfaces()
     if err != nil {
-        fmt.Println("get net interfaces error: ",err)
-        return
-    } 
-    for _, iface := range list {
-        addrs, _ := iface.Addrs()
-        fmt.Printf("interface: %s, ip: %s\n", iface.Name, strings.Split(addrs[0].String(), "/")[0])
+        applog.Log("get net interfaces error: ",err)
+    } else {
+        for _, iface := range list {
+            addrs, _ := iface.Addrs()
+            applog.Log("interface: %s, ip: %s\n", iface.Name, strings.Split(addrs[0].String(), "/")[0])
+        }
     }
+    applog.Log("end list")
 }
+
