@@ -92,8 +92,8 @@ RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
 * install amp-pilot binary in /bin/amp-pilot with executable rights, it should have:
     * pilotLoad 
     * amp-pilot.alpine
-    * amp-pilot.ubuntu
-    * amp-pilot.debian
+    * amp-pilot.amd64  for the other linux 64 bits
+
 
 create service this way:
 
