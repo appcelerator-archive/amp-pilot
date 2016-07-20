@@ -4,6 +4,13 @@ amp-pilot is launched inside a container controling the start/stop of the real a
 A set of applications using amp-pilot wait themself that their dependencies (other applications) are ready to start and so start in the right order avoiding any external scheduler.
 
 
+### build
+
+* in the git cloned directory, execute
+    * git clone the project in $GOPATH/src (need to have go installed with the right GOPATH)
+    * glide install the first time, glide update after (need to have glide installed)
+    * go build
+
 ### Tags
 
 * 1.1.0: last version including kafka feature
@@ -71,7 +78,7 @@ Conffile is optional and can do not exist. In all cases, the following environme
 
 
 
-### install
+### install inside a container
 
 to instal amp-pilot in a alpine container, add these in the Dockerfile:
 
@@ -79,6 +86,38 @@ to instal amp-pilot in a alpine container, add these in the Dockerfile:
 ENV AMPPILOT=1.1.0
 RUN curl -Lo /tmp/amp-pilot.alpine.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot.alpine-$AMPPILOT.tgz
 RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
+
+
+### load amp-pilot dynamically in a container
+
+* install amp-pilot binary in /bin/amp-pilot with executable rights, it should have:
+    * pilotLoad 
+    * amp-pilot.alpine
+    * amp-pilot.ubuntu
+    * amp-pilot.debian
+
+create service this way:
+
+docker service create --network [amp-swarm] --name [your service name] \
+ -m type=bind,source=/bin/amp-pilot,target=/bin/amp-pilot \
+ -m type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+ [your image] /bin/amp-pilot/pilotLoader
+
+
+ the needed parameters are:
+ * -m type=bind,source=/bin/amp-pilot,target=/bin/amp-pilot \
+ * -m type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+ * /bin/amp-pilot/pilotLoader
+
+ it's possible to add any AMPPILOT variable to modify the behavior, as for instance
+ * -e DEPENDENCIES="service1, service2"
+
+ the needed paramters are set automatically:
+    * SERVICE_NAME
+    * AMPPILOT_LAUNCH_CMD
+    * CONSUL (default consul:8500)
+    * KAFKA (default zookeeper:2181)
+    * AMPPILOT_REGISTEREDPORT
 
 
 #### future
