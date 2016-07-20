@@ -2,3 +2,6 @@ package: github.com/appcelerator/amp-pilot
 import:
 - package: github.com/Shopify/sarama
 - package: github.com/davecgh/go-spew/spew
+- package: github.com/docker/engine-api/client
+- package: github.com/docker/engine-api/types
+- package: golang.org/x/net/context

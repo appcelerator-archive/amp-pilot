@@ -3,13 +3,8 @@ package core
 import (
     "fmt"
     "io"
-    "os"
     "bufio"
 )
-
-const startupLogName string = "startup.log"
-const currentRotateLogName string = "current.log"
-const previousRotateLogName string = "previous.log"
 
 //All Log related variables
 type logData struct {
@@ -19,15 +14,6 @@ type logData struct {
     pipeStdoutReader *io.PipeReader
     pipeStderrWriter *io.PipeWriter
     pipeStderrReader *io.PipeReader  
-    startupLogPath string
-    previousRotateLogPath string  
-    currentRotateLogPath string  
-    startupFile *os.File
-    rotateFile *os.File
-    currentStartupSize int
-    startupMaxSize int
-    currentRotateSize int    
-    rotateMaxSize int
 }
 
 var applog logData

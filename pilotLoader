@@ -1,0 +1,16 @@
+#!/bin/sh
+
+FILE_U=/etc/issue.net
+FILE_D=/etc/debian_version
+
+if [ -f $FILE_U ]
+then
+        /bin/amp-pilot/amp-pilot.ubuntu	
+else
+	if [ -f $FILE_D ]
+	then
+		/bin/amp-pilot/amp-piote.debian		
+	else
+		/bin/amp-pilot/amp-pilot.alpine
+	fi
+fi

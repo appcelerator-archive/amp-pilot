@@ -61,17 +61,18 @@ func (self *PilotConfig) load() {
 
 //Set default value of configuration
 func (self *PilotConfig) setDefault() {
-    self.Consul = ""
-    self.Name = "unknown"
+    self.Consul = loadInfo.consul
+    self.Name = loadInfo.serviceName
+    self.Cmd = loadInfo.cmd
     self.CmdReady = ""
-    self.RegisteredPort = 80
+    self.RegisteredPort = loadInfo.registeredPort
     self.StartupCheckPeriod = 1
     self.CheckPeriod = 10
     self.ApplicationStop = false
     self.LogFileFormat = "2006-01-02 15:04:05.000"
     self.Dependencies = make([]DependencyConfig, 0)
     self.NetInterface="eth0"
-    self.Kafka=""
+    self.Kafka= loadInfo.kafka
     self.KafkaTopic="amp-logs"
     host, err := os.Hostname()
     if err == nil {
@@ -86,8 +87,12 @@ func (self *PilotConfig) setDefault() {
 //Update config with env variables
 func (self *PilotConfig) loadConfigUsingEnvVariable() {
     self.Consul = getStringParameter("CONSUL", self.Consul)
-    self.Name = getStringParameter("SERVICE_NAME", self.Name)
-    self.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", self.Cmd)
+    if (loadInfo.serviceName == "unknown") {
+        self.Name = getStringParameter("SERVICE_NAME", self.Name)
+    }
+    if (loadInfo.cmd == "") {
+        self.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", self.Cmd)
+    }
     self.CmdReady = getStringParameter("AMPPILOT_READY_CMD", self.CmdReady)
     self.NetInterface = getStringParameter("AMPPILOT_NETINTERFACE", self.NetInterface)
     self.RegisteredPort = getIntParameter("AMPPILOT_REGISTEREDPORT", self.RegisteredPort)

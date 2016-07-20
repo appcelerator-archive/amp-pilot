@@ -85,7 +85,7 @@ func (self *Consul) RegisterApp(serviceId string, name string, currentPoll int) 
     registerDataCheck := consulRegisterCheck {
         ID:  serviceId,
         Name: serviceId,
-        Notes:  fmt.Sprintf("TTL for %s set by amp-pilot", name),
+        Notes:  fmt.Sprintf("TTL for %s set by amp-pilot v%s", name, ampPilotVersion),
         ServiceID: serviceId,
         Status: "passing",
         TTL: fmt.Sprintf("%ds", currentPoll * 2),

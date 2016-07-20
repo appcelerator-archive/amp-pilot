@@ -34,7 +34,7 @@ var (
 
 
 //Set app mate initial values
-func (self * appMate) init(version string) {
+func (self * appMate) init() {
     rd := rand.New(rand.NewSource(time.Now().UnixNano()))
     id := rd.Int()
     self.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
@@ -43,12 +43,12 @@ func (self * appMate) init(version string) {
     self.killTime = time.Now().Add(-KillSafeDuration)
     self.stopApp = conf.ApplicationStop
     self.appReady = false
-    self.displayConfig(version)
+    self.displayConfig()
 }
 
 //display amp-pilot configuration
-func (self * appMate) displayConfig(version string) {
-    applog.Log("amp-pilot version: %v", version)
+func (self * appMate) displayConfig() {
+    applog.Log("amp-pilot version: %v", ampPilotVersion)
     applog.Log("----------------------------------------------------------------------------")
     applog.Log("Configuration:")
     applog.Log("Consul addr: %v", conf.Consul)
@@ -63,7 +63,11 @@ func (self * appMate) displayConfig(version string) {
     applog.Log("Dependency list {name, onlyAtStartup}: %v", conf.Dependencies)
     applog.Log("Service instance id: "+self.serviceId)
     applog.Log("Service registered IP: %s (on interface: %s)", conf.RegisteredIp, conf.NetInterface)
-    applog.Log("Service registered Port: %v",conf.RegisteredPort)
+    if (conf.RegisteredPort == 0) {
+        applog.Log("Service registered Port: no registered port")
+    } else {
+        applog.Log("Service registered Port: %v",conf.RegisteredPort)
+    }
     applog.Log("----------------------------------------------------------------------------")
 }
 

@@ -7,8 +7,11 @@ import (
     "os"    
 )
 
+var ampPilotVersion string
+
 //launch main loop
 func Run(version string) {
+    ampPilotVersion = version
     applog.init()
     conf.load()
     if conf.Consul == "" {
@@ -16,7 +19,7 @@ func Run(version string) {
         mate.executeApp(false)
         os.Exit(0)    
     }
-    mate.init(version)
+    mate.init()
     mate.trapSignal()
     runtime.GOMAXPROCS(4)
     applog.Log("waiting for dependencies...");

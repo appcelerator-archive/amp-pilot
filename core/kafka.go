@@ -31,6 +31,7 @@ type logMessage struct {
 var kafka Kafka
 
 
+//init Kafka struct
 func (self *Kafka) init() {
     fmt.Println("kafka init")
     self.kafkaReady = false
@@ -40,6 +41,7 @@ func (self *Kafka) init() {
     self.startPeriodicKafkaChecking()
 }
 
+//launch the periodical Kafka checking and create Producer if ready
 func (self *Kafka) startPeriodicKafkaChecking() {
     fmt.Println("start Kafka checking")
     go func() {
@@ -71,6 +73,7 @@ func (self *Kafka) startPeriodicKafkaChecking() {
     }()
 }
 
+//create the message struct save it in buffer if Kafka not reday, send to Kafka if ready,
 func (self *Kafka) sendMessage(message string, isError bool) {
     var mes logMessage
     mes.Service_uuid = conf.Name
@@ -89,6 +92,7 @@ func (self *Kafka) sendMessage(message string, isError bool) {
     }
 }
 
+//Marshal the message and send it to Kafka
 func (self *Kafka) sendToKafka(mes logMessage) {
     data, _ := json.Marshal(mes)
     select {
@@ -101,6 +105,7 @@ func (self *Kafka) sendToKafka(mes logMessage) {
     }
 }
 
+//Save the message struct in Buffer
 func (self *Kafka) saveMessageOnBuffer(msg logMessage) {
     if self.messageBufferIndex < maxBuffer {
         self.messageBuffer[self.messageBufferIndex] = msg
@@ -108,6 +113,7 @@ func (self *Kafka) saveMessageOnBuffer(msg logMessage) {
     }
 }
 
+//Send all message in buffer to Kafka
 func (self *Kafka) sendMessageBuffer() {
     applog.Log("Write message buffer to Kafka (%v)", self.messageBufferIndex)
     if self.messageBufferIndex >0 {
@@ -119,6 +125,7 @@ func (self *Kafka) sendMessageBuffer() {
     applog.Log("Write message buffer done")
 }
 
+//Close Kafka producer
 func (self *Kafka) close() error {
     if self.producer == nil {
         return nil
