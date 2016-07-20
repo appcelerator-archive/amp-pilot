@@ -70,7 +70,6 @@ Conffile is optional and can do not exist. In all cases, the following environme
  * AMPPILOT_STARTUPCHECKPERIOD: period of dependencies checking and consul heartbeat at startup, default=1 second
  * AMPPILOT_CHECKPERIOD: period of dependencies checking and consul heartbeat after startup, default=10 seconds
  * AMPPILOT_STOPATMATESTOP: stop the container if the app mate stop by it-self, default=false
- * AMPPILOT_LOGFILEFORMAT: log time format for logs written in Kafka, based on time.Format (package time), default "2006-01-02 15:04:05.000"
  * KAFKA: address and port of Kafka node, could be Zookeeper node (amp-pilot will find all the other Kafka nodes if exist), if doesn't exist, then no logs is sent to Kafka
  * KAFKA_TOPIC: the topic on which amp-pilot sends the logs, default: amp-logs
  * DEPENDENCIES: dependency names list, if not exist then app mate don't have dependency and starts immediatly

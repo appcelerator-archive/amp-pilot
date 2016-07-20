@@ -69,7 +69,7 @@ func (self *PilotConfig) setDefault() {
     self.StartupCheckPeriod = 1
     self.CheckPeriod = 10
     self.ApplicationStop = false
-    self.LogFileFormat = "2006-01-02 15:04:05.000"
+    self.LogFileFormat = "2006-01-02'T'15.04.05.000"//Format to be accepted by elasticsearch
     self.Dependencies = make([]DependencyConfig, 0)
     self.NetInterface="eth0"
     self.Kafka= loadInfo.kafka
@@ -99,7 +99,7 @@ func (self *PilotConfig) loadConfigUsingEnvVariable() {
     self.StartupCheckPeriod = getIntParameter("AMPPILOT_STARTUPCHECKPERIOD", self.StartupCheckPeriod)
     self.CheckPeriod = getIntParameter("AMPPILOT_CHECKPERIOD", self.CheckPeriod)
     self.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", self.ApplicationStop)
-    self.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", self.LogFileFormat)
+    //self.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", self.LogFileFormat)
     self.Dependencies = getDependencyArrayParameter("DEPENDENCIES", self.Dependencies)
     self.Kafka = getStringParameter("KAFKA", self.Kafka)
     self.KafkaTopic = getStringParameter("KAFKA_TOPIC", self.KafkaTopic)

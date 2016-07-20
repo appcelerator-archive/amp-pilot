@@ -42,7 +42,6 @@ func AutoLoad(cmd []string) error {
         loadInfo.cmd = loadInfo.cmdToString(cmd)
         fmt.Println("cmd replaced by args=", loadInfo.cmd)
     }
-    fmt.Println("service: "+loadInfo.serviceName)
     return nil
 }
 

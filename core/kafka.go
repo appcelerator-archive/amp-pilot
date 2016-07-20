@@ -14,13 +14,12 @@ type Kafka struct {
     producer samara.AsyncProducer
     kafkaReady bool 
     messageBuffer []logMessage
-    messageBufferIndex int
-    timeIndex int
+    messageBufferIndex int    
 }
 
 type logMessage struct {
     Timestamp time.Time     `json:"timestamp"`
-    Time_id time.Time       `json:"time_id"`
+    Time_id  string         `json:"time_id"`
     Service_uuid string     `json:"service_uuid"`
     Message string          `json:"message"`
     IsError bool            `json:"is_error"`
@@ -37,7 +36,6 @@ func (self *Kafka) init() {
     self.kafkaReady = false
     self.messageBuffer = make([]logMessage, maxBuffer)
     self.messageBufferIndex = 0
-    self.timeIndex = 0 
     self.startPeriodicKafkaChecking()
 }
 
@@ -82,8 +80,7 @@ func (self *Kafka) sendMessage(message string, isError bool) {
     mes.Message = message
     mes.IsError = isError
     mes.Timestamp = time.Now()
-    self.timeIndex++
-    mes.Time_id = time.Now()
+    mes.Time_id = fmt.Sprintf("%v", time.Now().UnixNano())
     //fmt.Println("send message: ", mes)    
     if !self.kafkaReady {
         self.saveMessageOnBuffer(mes)
@@ -94,9 +91,42 @@ func (self *Kafka) sendMessage(message string, isError bool) {
 
 //Marshal the message and send it to Kafka
 func (self *Kafka) sendToKafka(mes logMessage) {
-    data, _ := json.Marshal(mes)
+
+    var data string
+    if (mes.Message[0:1] == "{") {
+        mesMap := make(map[string]string)
+        var objmap map[string]*json.RawMessage
+        err := json.Unmarshal([]byte(mes.Message), &objmap)
+        if (err == nil) {
+            for key, value := range objmap {
+                data, err2 := value.MarshalJSON()
+                if (err2 == nil) {
+                    mesMap[key] = strings.Trim(string(data),"\"")
+                }
+            }
+            mesMap["message"] = mesMap["msg"]
+            mesMap["service_uuid"] = mes.Service_uuid
+            mesMap["host_ip"] = mes.Host_ip
+            mesMap["container_id"] = mes.Container_id
+            if (mes.IsError) {
+                mesMap["is_error"] = "true"
+            } else {
+                mesMap["is_error"] = "false"
+            }
+            mesMap["time_id"] = mes.Time_id
+            dat, _ := json.Marshal(mesMap)
+            data = string(dat)
+            data = fmt.Sprintf("{\"timestamp\": %v, %s",mes.Timestamp.Unix(), data[1:])
+        } else {
+            dat, _ := json.Marshal(mes)  
+            data = string(dat) 
+        }
+    } else {
+        dat, _ := json.Marshal(mes)
+        data = string(dat)
+    }
     select {
-        case self.producer.Input() <- &samara.ProducerMessage{Topic: conf.KafkaTopic, Key: nil, Value: samara.StringEncoder(string(data))}:
+        case self.producer.Input() <- &samara.ProducerMessage{Topic: conf.KafkaTopic, Key: nil, Value: samara.StringEncoder(data)}:
             //fmt.Println("sent")
             break
         case err := <-self.producer.Errors():
