@@ -49,13 +49,17 @@ func (self *Kafka) startPeriodicKafkaChecking() {
                 applog.Log("Kafka is ready")
                 if self.producer == nil {
                     config := samara.NewConfig()
-                    client, err := samara.NewClient(strings.Split("kafka:9092",","), config)
-                    prod, err := samara.NewAsyncProducerFromClient(client)
-                    if err != nil {
-                        applog.LogError("Error on kafka producer: ", err)
+                    client, err := samara.NewClient(strings.Split(conf.Kafka,","), config)
+                    if (err != nil) {
+                        applog.LogError("Error on kafka client: ", err)
                     } else {
-                        applog.Log("Kafka producer created on topic: amp-logs")
-                        self.producer = prod
+                        prod, err := samara.NewAsyncProducerFromClient(client)
+                        if err != nil {
+                            applog.LogError("Error on kafka producer: ", err)
+                        } else {
+                            applog.Log("Kafka producer created on topic: amp-logs")
+                            self.producer = prod
+                        }
                     }
                 }
                 if (self.producer != nil) {
@@ -91,17 +95,18 @@ func (self *Kafka) sendMessage(message string, isError bool) {
 
 //Marshal the message and send it to Kafka
 func (self *Kafka) sendToKafka(mes logMessage) {
-
     var data string
-    if (mes.Message[0:1] == "{") {
+    if (len(mes.Message)>0 && mes.Message[0:1] == "{") {
         mesMap := make(map[string]string)
         var objmap map[string]*json.RawMessage
         err := json.Unmarshal([]byte(mes.Message), &objmap)
         if (err == nil) {
             for key, value := range objmap {
-                data, err2 := value.MarshalJSON()
-                if (err2 == nil) {
-                    mesMap[key] = strings.Trim(string(data),"\"")
+                if (key != "timestamp") {
+                    data, err2 := value.MarshalJSON()
+                    if (err2 == nil) {
+                        mesMap[key] = strings.Trim(string(data),"\"")
+                    }
                 }
             }
             mesMap["message"] = mesMap["msg"]

@@ -90,7 +90,7 @@ RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
 ### load amp-pilot dynamically in a container
 
 * install amp-pilot binary in /bin/amp-pilot with executable rights, it should have:
-    * pilotLoad 
+    * pilotLoader 
     * amp-pilot.alpine
     * amp-pilot.amd64  for the other linux 64 bits
 

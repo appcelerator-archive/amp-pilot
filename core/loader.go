@@ -49,7 +49,7 @@ func AutoLoad(cmd []string) error {
 func (self *LoadInfo) initForLoading() {
     self.containerShortId=os.Getenv("HOSTNAME")
     self.consul = "consul:8500"
-    self.kafka = "zookeeper:2181"
+    self.kafka = "kafka:9092"
 }
 
 //set the default value of the variable if empty

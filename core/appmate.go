@@ -149,8 +149,11 @@ func (self * appMate) executeApp(attachLog bool) {
         self.app.Stdout = applog.getPipeStdoutWriter()
     }
     self.appStarted = true
-    self.app.Run()
+    err := self.app.Run()
     self.appStarted = false
+    if (err != nil) {
+        applog.LogError("application mate exit with error: ", err)
+    }
 }
 
 //Stop app mate
