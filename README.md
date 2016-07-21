@@ -86,7 +86,7 @@ ENV AMPPILOT=1.1.0
 RUN curl -Lo /tmp/amp-pilot.alpine.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot.alpine-$AMPPILOT.tgz
 RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
 
-starting v1.1.1:
+starting v1.1.1: the distrib embed amp-pilot for alpine, amd64 and the pilotLoader for dynamaic loading
 
 ENV AMPPILOT=1.1.1
 RUN curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot-$AMPPILOT.tgz
@@ -94,12 +94,14 @@ RUN tar xf /tmp/amp-pilot.tgz && mv ./amp-pilot.alpine /bin/amp-pilot && rm /tmp
 
 
 
-### load amp-pilot dynamically in a container
+### load amp-pilot dynamically in a container (starting 1.1.1)
 
-* install amp-pilot binary in /bin/amp-pilot with executable rights, it should have:
-    * pilotLoader 
-    * amp-pilot.alpine
-    * amp-pilot.amd64  for the other linux 64 bits
+* install amp-pilot binary in /bin/amppilot with executable rights, downloading the distrib:
+    * curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot-$AMPPILOT.tgz
+    * it should have the files, in /bin/amppilot
+        * pilotLoader 
+        * amp-pilot.alpine
+        * amp-pilot.amd64  for the other linux 64 bits
 
 
 create service this way:
