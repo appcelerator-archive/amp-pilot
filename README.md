@@ -86,6 +86,13 @@ ENV AMPPILOT=1.1.0
 RUN curl -Lo /tmp/amp-pilot.alpine.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot.alpine-$AMPPILOT.tgz
 RUN tar xvz -f /tmp/amp-pilot.alpine.tgz && mv ./amp-pilot.alpine /bin/
 
+starting v1.1.1:
+
+ENV AMPPILOT=1.1.1
+RUN curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot-$AMPPILOT.tgz
+RUN tar xf /tmp/amp-pilot.tgz && mv ./amp-pilot.alpine /bin/amp-pilot && rm /tmp/amp-pilot.tgz
+
+
 
 ### load amp-pilot dynamically in a container
 
