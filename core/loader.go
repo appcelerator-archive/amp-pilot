@@ -16,6 +16,7 @@ type LoadInfo struct {
     serviceName string
     imageId string
     cmd string
+    entryPoint string
     archi string
     os string
     registeredPort int
@@ -50,6 +51,7 @@ func (self *LoadInfo) initForLoading() {
     self.containerShortId=os.Getenv("HOSTNAME")
     self.consul = "consul:8500"
     self.kafka = "kafka:9092"
+    os.Setenv("CONSUL", "") //Desactivate the embebed amp-pilot if exist
 }
 
 //set the default value of the variable if empty
@@ -113,6 +115,10 @@ func (self *LoadInfo) getContainerInformation() error {
     }
     self.cmd = self.cmdToString(image.Config.Cmd)
     fmt.Println("cmd=", self.cmd)
+    self.entryPoint = self.cmdToString(image.Config.Entrypoint)
+    fmt.Println("entryPoint=", self.entryPoint)    
+    self.cmd = strings.Trim(self.entryPoint + " "+ self.cmd, " ")
+    fmt.Println("Cmd result: "+self.cmd)
     self.archi = image.Architecture
     self.os = image.Os
     return nil
