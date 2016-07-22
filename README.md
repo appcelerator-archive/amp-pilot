@@ -97,7 +97,7 @@ RUN tar xf /tmp/amp-pilot.tgz && mv ./amp-pilot.alpine /bin/amp-pilot && rm /tmp
 ### load amp-pilot dynamically in a container (starting 1.1.1)
 
 * install amp-pilot binary in /bin/amppilot with executable rights, downloading the distrib:
-    * curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot-$AMPPILOT.tgz
+    * curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/1.1.1/amp-pilot-1.1.1.tgz
     * it should have the files, in /bin/amppilot
         * pilotLoader 
         * amp-pilot.alpine
