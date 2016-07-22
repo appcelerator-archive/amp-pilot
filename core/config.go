@@ -28,7 +28,6 @@ type PilotConfig struct {
     KafkaTopic string
     //updated by amp-pilot
     Host string
-    ContainerId string
 }
 
 type DependencyConfig struct {
@@ -80,7 +79,6 @@ func (self *PilotConfig) setDefault() {
     } else {
         self.Host = ""
     }
-    self.ContainerId = ""
     //displayIp()
 }
 
@@ -103,7 +101,6 @@ func (self *PilotConfig) loadConfigUsingEnvVariable() {
     self.Dependencies = getDependencyArrayParameter("DEPENDENCIES", self.Dependencies)
     self.Kafka = getStringParameter("KAFKA", self.Kafka)
     self.KafkaTopic = getStringParameter("KAFKA_TOPIC", self.KafkaTopic)
-    self.ContainerId = getStringParameter("HOSTNAME", self.ContainerId)
 }
 
 //Control configutation values, update or exit if critical issue

@@ -25,11 +25,10 @@ func Run(version string) {
     applog.Log("waiting for dependencies...");
     mate.startPeriodicChecking()
     for {
-        if mate.dependenciesReady && mate.appReady {
+        if mate.dependenciesReady {
             mate.currentPeriod = conf.CheckPeriod
             mate.executeApp(true)
             mate.dependenciesReady = mate.checkDependencies(false)
-            mate.appReady = false
             mate.currentPeriod = conf.StartupCheckPeriod
             if mate.stopApp {
                 consul.DeregisterApp(mate.serviceId)

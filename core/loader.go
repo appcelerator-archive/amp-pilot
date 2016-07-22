@@ -14,6 +14,10 @@ type LoadInfo struct {
     containerShortId string
     containerId string
     serviceName string
+    serviceId string
+    stackId string
+    stackName string
+    nodeId string
     imageId string
     cmd string
     entryPoint string
@@ -32,6 +36,7 @@ func InitLoader() {
     loadInfo.kafka = ""
     loadInfo.consul = ""
     loadInfo.cmd = ""
+    loadInfo.entryPoint = ""
     loadInfo.registeredPort = 0
 }
 
@@ -40,7 +45,7 @@ func AutoLoad(cmd []string) error {
     loadInfo.initForLoading()
     loadInfo.getContainerInformation()
     if (len(cmd) > 0) {
-        loadInfo.cmd = loadInfo.cmdToString(cmd)
+        loadInfo.cmd = strings.Trim(loadInfo.entryPoint + " " + loadInfo.cmdToString(cmd), " ")
         fmt.Println("cmd replaced by args=", loadInfo.cmd)
     }
     return nil
@@ -100,6 +105,14 @@ func (self *LoadInfo) getContainerInformation() error {
     for key, value := range labels {
         if (key == "com.docker.swarm.service.name") {
             self.serviceName = value
+        } else if (key == "com.docker.swarm.service.id") {
+            self.serviceId = value
+        } else if (key == "com.docker.swarm.task.name") {
+            self.stackName = value
+        } else if (key == "com.docker.swarm.task.id") {
+            self.stackId = value
+        } else if (key == "com.docker.swarm.node.id") {
+            self.nodeId = value            
         }
     }
     fmt.Println("ServiceName=", self.serviceName)

@@ -18,13 +18,19 @@ type Kafka struct {
 }
 
 type logMessage struct {
-    Timestamp time.Time     `json:"timestamp"`
-    Time_id  string         `json:"time_id"`
-    Service_uuid string     `json:"service_uuid"`
-    Message string          `json:"message"`
-    IsError bool            `json:"is_error"`
-    Container_id string     `json:"container_id"`
-    Host_ip string          `json:"host_id"`
+    Timestamp time.Time         `json:"timestamp"`
+    Time_id  string             `json:"time_id"`
+    Service_uuid string         `json:"service_uuid"` //obsolet to be removed
+    Service_id string           `json:"service_name"`
+    Service_name string         `json:"service_id"`
+    Stack_id string              `json:"task_id"`
+    Stack_name string            `json:"task_name"`
+    Message string              `json:"message"`
+    IsError bool                `json:"is_error"`
+    Container_shortid string    `json:"container_id"`
+    Container_id string         `json:"container_id"`
+    Node_id string              `json:"node_id"`
+    Host_ip string              `json:"host_ip"`
 }
 
 var kafka Kafka
@@ -79,8 +85,14 @@ func (self *Kafka) startPeriodicKafkaChecking() {
 func (self *Kafka) sendMessage(message string, isError bool) {
     var mes logMessage
     mes.Service_uuid = conf.Name
+    mes.Service_name = conf.Name
+    mes.Service_id = loadInfo.serviceId
     mes.Host_ip = conf.RegisteredIp
-    mes.Container_id = conf.ContainerId
+    mes.Node_id = loadInfo.nodeId
+    mes.Container_id = loadInfo.containerId
+    mes.Container_shortid = loadInfo.containerShortId
+    mes.Stack_id = loadInfo.stackId
+    mes.Stack_name = loadInfo.stackName
     mes.Message = message
     mes.IsError = isError
     mes.Timestamp = time.Now()

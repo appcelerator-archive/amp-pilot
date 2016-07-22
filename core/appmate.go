@@ -130,6 +130,8 @@ func (self * appMate) isAppReady() bool {
     applog.Log("execute: "+conf.CmdReady)
     cmdList := strings.Split(conf.CmdReady, " ")[:]
     cmd := exec.Command(cmdList[0], cmdList[1:]...)
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
     err := cmd.Run()
     if err != nil {
         applog.Log("app mate not ready: "+conf.CmdReady+" throw error=", err)
@@ -139,7 +141,7 @@ func (self * appMate) isAppReady() bool {
     return true
 }
 
-//Launch the app mate usin conffile cmd command
+//Launch the app mate using cmd command
 func (self * appMate) executeApp(attachLog bool) {
     applog.Log("execute: "+conf.Cmd);
     cmdList := strings.Split(conf.Cmd, " ")[:]
@@ -190,9 +192,7 @@ func (self * appMate) checkForDependenciesAndReadyness() {
     }
     self.dependenciesReady = self.checkDependencies(launched)
     if self.dependenciesReady {
-        if !launched {
-            self.appReady = self.isAppReady()
-        }
+        self.appReady = self.isAppReady()
     } else {
         if launched {
             self.stopAppMate()
