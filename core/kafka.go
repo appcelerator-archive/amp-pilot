@@ -21,8 +21,8 @@ type logMessage struct {
     Timestamp time.Time         `json:"timestamp"`
     Time_id  string             `json:"time_id"`
     Service_uuid string         `json:"service_uuid"` //obsolet to be removed
-    Service_id string           `json:"service_name"`
-    Service_name string         `json:"service_id"`
+    Service_id string           `json:"service_id"`
+    Service_name string         `json:"service_name"`
     Stack_id string              `json:"task_id"`
     Stack_name string            `json:"task_name"`
     Message string              `json:"message"`
@@ -123,8 +123,14 @@ func (self *Kafka) sendToKafka(mes logMessage) {
             }
             mesMap["message"] = mesMap["msg"]
             mesMap["service_uuid"] = mes.Service_uuid
+            mesMap["service_id"] = mes.Service_id
+            mesMap["service_name"] = mes.Service_name
+            mesMap["stack_id"] = mes.Stack_id
+            mesMap["stack_name"] = mes.Stack_name
+            mesMap["node_id"] = mes.Node_id            
             mesMap["host_ip"] = mes.Host_ip
             mesMap["container_id"] = mes.Container_id
+            mesMap["container_shortid"] = mes.Container_shortid
             if (mes.IsError) {
                 mesMap["is_error"] = "true"
             } else {
