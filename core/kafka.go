@@ -76,7 +76,11 @@ func (self *Kafka) startPeriodicKafkaChecking() {
                 self.kafkaReady = false
                 applog.Log("Kafka is not ready yet")
             }
-            time.Sleep(time.Duration(30) * time.Second)
+            if (mate.appStarted) {
+                time.Sleep(time.Duration(30) * time.Second)
+            } else {
+                time.Sleep(time.Duration(3) * time.Second)
+            }
         }
     }()
 }
