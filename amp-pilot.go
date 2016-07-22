@@ -6,7 +6,7 @@ import (
     "github.com/appcelerator/amp-pilot/core"
 )
 
-const version string = "1.1.1-3"
+const version string = "1.1.1-4"
 
 func main() {
     args := os.Args[1:]

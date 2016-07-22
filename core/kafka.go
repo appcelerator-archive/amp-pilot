@@ -23,8 +23,8 @@ type logMessage struct {
     Service_uuid string         `json:"service_uuid"` //obsolet to be removed
     Service_id string           `json:"service_id"`
     Service_name string         `json:"service_name"`
-    Stack_id string              `json:"task_id"`
-    Stack_name string            `json:"task_name"`
+    Stack_id string             `json:"task_id"`
+    Stack_name string           `json:"task_name"`
     Message string              `json:"message"`
     IsError bool                `json:"is_error"`
     Container_shortid string    `json:"container_id"`
@@ -143,7 +143,7 @@ func (self *Kafka) sendToKafka(mes logMessage) {
             mesMap["time_id"] = mes.Time_id
             dat, _ := json.Marshal(mesMap)
             data = string(dat)
-            data = fmt.Sprintf("{\"timestamp\": %v, %s",mes.Timestamp.Unix(), data[1:])
+            data = fmt.Sprintf("{\"timestamp\": %v, %s",mes.Timestamp.Unix()*1000, data[1:])
         } else {
             dat, _ := json.Marshal(mes)  
             data = string(dat) 
