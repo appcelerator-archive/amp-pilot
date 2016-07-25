@@ -77,7 +77,7 @@ Conffile is optional and can do not exist. In all cases, the following environme
 
 
 
-### install inside a container
+### install inside a container.
 
 to instal amp-pilot in a alpine container, add these in the Dockerfile:
 
@@ -91,7 +91,6 @@ starting v1.1.1: the distrib embed amp-pilot for alpine, amd64 and the pilotLoad
 ENV AMPPILOT=1.1.1
 RUN curl -Lo /tmp/amp-pilot.tgz https://github.com/appcelerator/amp-pilot/releases/download/$AMPPILOT/amp-pilot-$AMPPILOT.tgz
 RUN tar xf /tmp/amp-pilot.tgz && mv ./amp-pilot.alpine /bin/amp-pilot && rm /tmp/amp-pilot.tgz
-
 
 
 ### load amp-pilot dynamically in a container (starting 1.1.1)
