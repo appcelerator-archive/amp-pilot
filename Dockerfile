@@ -9,6 +9,8 @@ ENV PATH /go/bin:$PATH
 RUN mkdir -p /go/src/github.com/appcelerator/amp-pilot
 WORKDIR /go/src/github.com/appcelerator/amp-pilot
 COPY ./ ./
+RUN go get -u github.com/Masterminds/glide/...
+RUN glide install
 RUN go build                   
 COPY ./test.sh /bin/test.sh
 
