@@ -17,4 +17,5 @@ COPY ./amp-pilot /go/bin/amp-pilot.amd64
 COPY ./pilotLoader /go/bin/pilotLoader
 RUN chmod +x /go/bin/*
 
-ENTRYPOINT ["/go/bin/amp-pilot.alpine", "initBinaries"]
+ENTRYPOINT ["/go/bin/amp-pilot.alpine"]
+CMD ["initBinaries"]

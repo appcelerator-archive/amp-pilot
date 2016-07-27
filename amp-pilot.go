@@ -12,6 +12,14 @@ func main() {
     args := os.Args[1:]
     fmt.Println("amp-pilot started with argument: ", args)
     core.InitLoader()
+    if (len(args)>0 && args[0] == "autotest") {
+        err := core.AutoLoad(args)
+        if (err!=nil) {
+            fmt.Println("start error:",err)
+            os.Exit(1)
+        }
+        os.Exis(0)
+    }
     if (len(args)>0 && args[0] == "initBinaries") {
         core.InitBinaries(args)
     } else {

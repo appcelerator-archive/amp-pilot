@@ -3,4 +3,4 @@ services:
   sut:
     build: .
     image: appcelerator/amp-pilot:latest
-    command: echo ok
+    command: autotest
