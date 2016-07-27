@@ -51,7 +51,7 @@ func (self *logData) init() {
     self.pipeStderrReader = re
     self.pipeStderrWriter = we    
     self.stderr = self.newStderrWriter()
-    self.stdout = self.newStdoutWriter() 
+    self.stdout = self.newStdoutWriter()
     kafka.init()
 }
 

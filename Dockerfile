@@ -5,21 +5,16 @@ RUN apk update
 RUN apk add bash go bzr git mercurial subversion openssh-client ca-certificates && mkdir -p /go/src /go/bin && chmod -R 777 /go
 ENV GOPATH /go
 ENV PATH /go/bin:$PATH
-RUN mkdir -p /go/src/github.com/appcelerator/amp-pilot
+RUN mkdir -p /go/src/github.com/appcelerator/amp-pilot /go/bin
 WORKDIR /go/src/github.com/appcelerator/amp-pilot
 COPY ./ ./
+RUN rm -rf ./vendor
 RUN go get -u github.com/Masterminds/glide/...
 RUN glide install
-RUN go build                   
-COPY ./test.sh /bin/test.sh
+RUN go build -o /go/bin/amp-pilot.alpine              
 
-ENV CONSUL=consul:8500
-ENV KAFKA=zookeeper:2181
-ENV SERVICE_NAME=amp-test
-ENV AMPPILOT_LAUNCH_CMD=/bin/test.sh
-ENV AMPPILOT_STARTUPCHECKPERIOD=1
-ENV AMPPILOT_CHECKPERIOD=10
-ENV AMPPILOT_STOPATMATESTOP=false
-ENV DEPENDENCIES=""
+COPY ./amp-pilot /go/bin/amp-pilot.amd64
+COPY ./pilotLoader /go/bin/pilotLoader
+RUN chmod +x /go/bin/*
 
-CMD ["/bin/amp-pilot"]
+ENTRYPOINT ["/go/bin/amp-pilot.alpine", "initBinaries"]

@@ -37,7 +37,11 @@ var (
 func (self * appMate) init() {
     rd := rand.New(rand.NewSource(time.Now().UnixNano()))
     id := rd.Int()
-    self.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
+    if (loadInfo.serviceId != "") {
+        self.serviceId = loadInfo.serviceId
+    } else {
+        self.serviceId = fmt.Sprintf("%v_%v",conf.Name, id)
+    }
     self.dependenciesReady = false
     self.currentPeriod = conf.StartupCheckPeriod
     self.killTime = time.Now().Add(-KillSafeDuration)
@@ -154,7 +158,7 @@ func (self * appMate) executeApp(attachLog bool) {
     err := self.app.Run()
     self.appStarted = false
     if (err != nil) {
-        applog.LogError("application mate exit with error: ", err)
+        applog.LogError("application mate exit with error: %v", err)
     }
 }
 

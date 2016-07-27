@@ -2,15 +2,33 @@
 
 FILE_U=/etc/issue.net
 FILE_D=/etc/debian_version
+BIN1=/bin/amppilot/amp-pilot.alpine
+BIN2=/bin/amppilot/amp-pilot.amd64
 
+echo "pilotLoader launched"
+while [ ! -f $BIN1 ]
+do
+	echo "waiting for "$BIN1
+	sleep 3
+done
+while [ ! -f $BIN2 ]
+do
+	echo "waiting for "$BIN2
+	sleep 3
+done
+
+echo "binaries ready"
 if [ -f $FILE_U ]
 then
-        /bin/amp-pilot/amp-pilot.amd64 $*
+	echo "Launch amp-pilot.amd64"
+        exec /bin/amppilot/amp-pilot.amd64 $*
 else
 	if [ -f $FILE_D ]
 	then
-		/bin/amp-pilot/amp-piote.amd64 $*
+		echo "Launch amp-pilot.amd64"
+		exec /bin/amppilot/amp-pilot.amd64 $*
 	else
-		/bin/amp-pilot/amp-pilot.alpine $*
+		echo "Launch amp-pilot.alpine"
+		exec /bin/amppilot/amp-pilot.alpine $*
 	fi
 fi
