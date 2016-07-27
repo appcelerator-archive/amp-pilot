@@ -18,7 +18,7 @@ func main() {
             fmt.Println("start error:",err)
             os.Exit(1)
         }
-        os.Exis(0)
+        os.Exit(0)
     }
     if (len(args)>0 && args[0] == "initBinaries") {
         core.InitBinaries(args)
