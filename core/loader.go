@@ -269,9 +269,6 @@ func isExist(file string, shouldBeDir bool) bool {
     if err != nil {
         return false 
     }
-    if (!shouldBeDir && in.IsDir()) {   
-        return false
-    }
     if (shouldBeDir && !in.IsDir()) {
         return false
     }
