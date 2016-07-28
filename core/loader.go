@@ -17,8 +17,6 @@ type LoadInfo struct {
     containerId string
     serviceName string
     serviceId string
-    stackId string
-    stackName string
     nodeId string
     imageId string
     cmd string
@@ -28,6 +26,7 @@ type LoadInfo struct {
     registeredPort int
     consul string
     kafka string
+    pilotLoader bool
 }
 
 const srcFolder = "/go/bin/"
@@ -44,7 +43,11 @@ func InitLoader() {
     loadInfo.entryPoint = ""
     loadInfo.registeredPort = 0
     loadInfo.serviceId = ""
-    loadInfo.stackId = ""
+    loadInfo.pilotLoader = false
+    loadInfo.kafka = os.Getenv("AMPPILOT_KAFKA")
+    if (strings.ToLower(loadInfo.kafka) == "none") {
+        loadInfo.kafka = ""
+    }
 }
 
 //set all needed amp-pilot variable searching in the container itself if needed
@@ -61,8 +64,17 @@ func AutoLoad(cmd []string) error {
 //Set default parametrer when the loader is used
 func (self *LoadInfo) initForLoading() {
     self.containerShortId=os.Getenv("HOSTNAME")
-    self.consul = "consul:8500"
-    self.kafka = "kafka:9092"
+    self.consul = os.Getenv("CONSUL")
+    if self.consul == "" {
+        self.consul = "consul:8500"
+    }
+    self.kafka = os.Getenv("AMPPILOT_KAFKA")
+    if self.kafka == "" {
+        self.kafka = "kafka:9092"
+    }
+    if self.kafka == "none" {
+        self.kafka = ""
+    }
     os.Setenv("CONSUL", "") //Desactivate the embebed amp-pilot if exist
 }
 
@@ -112,17 +124,15 @@ func (self *LoadInfo) getContainerInformation() error {
     for key, value := range labels {
         if (key == "com.docker.swarm.service.name") {
             self.serviceName = value
+            fmt.Println("ServiceName=", self.serviceName)
         } else if (key == "com.docker.swarm.service.id") {
             self.serviceId = value
-        } else if (key == "com.docker.swarm.task.name") {
-            self.stackName = value
-        } else if (key == "com.docker.swarm.task.id") {
-            self.stackId = value
+            fmt.Println("ServiceId=", self.serviceId)
         } else if (key == "com.docker.swarm.node.id") {
-            self.nodeId = value            
+            self.nodeId = value  
+            fmt.Println("Noded=", self.nodeId)          
         }
     }
-    fmt.Println("ServiceName=", self.serviceName)
     ports := container.Ports
     fmt.Println("ports: ", ports)
     if len(ports)>0 {

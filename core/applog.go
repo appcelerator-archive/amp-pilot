@@ -52,7 +52,9 @@ func (self *logData) init() {
     self.pipeStderrWriter = we    
     self.stderr = self.newStderrWriter()
     self.stdout = self.newStdoutWriter()
-    kafka.init()
+    if loadInfo.kafka !="" { //before conf.init conf.Kafka is not yet set
+        kafka.init()
+    }
 }
 
 //Launch new routine to app mate read/write stdout

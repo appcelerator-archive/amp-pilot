@@ -21,7 +21,7 @@ func Run(version string) {
     }
     mate.init()
     mate.trapSignal()
-    runtime.GOMAXPROCS(4)
+    runtime.GOMAXPROCS(6)
     applog.Log("waiting for dependencies...");
     mate.startPeriodicChecking()
     for {

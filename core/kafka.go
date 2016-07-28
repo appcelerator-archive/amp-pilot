@@ -23,8 +23,6 @@ type logMessage struct {
     Service_uuid string         `json:"service_uuid"` //obsolet to be removed
     Service_id string           `json:"service_id"`
     Service_name string         `json:"service_name"`
-    Stack_id string             `json:"task_id"`
-    Stack_name string           `json:"task_name"`
     Message string              `json:"message"`
     IsError bool                `json:"is_error"`
     Container_shortid string    `json:"container_id"`
@@ -95,8 +93,6 @@ func (self *Kafka) sendMessage(message string, isError bool) {
     mes.Node_id = loadInfo.nodeId
     mes.Container_id = loadInfo.containerId
     mes.Container_shortid = loadInfo.containerShortId
-    mes.Stack_id = loadInfo.stackId
-    mes.Stack_name = loadInfo.stackName
     mes.Message = message
     mes.IsError = isError
     mes.Timestamp = time.Now()
@@ -129,8 +125,6 @@ func (self *Kafka) sendToKafka(mes logMessage) {
             mesMap["service_uuid"] = mes.Service_uuid
             mesMap["service_id"] = mes.Service_id
             mesMap["service_name"] = mes.Service_name
-            mesMap["stack_id"] = mes.Stack_id
-            mesMap["stack_name"] = mes.Stack_name
             mesMap["node_id"] = mes.Node_id            
             mesMap["host_ip"] = mes.Host_ip
             mesMap["container_id"] = mes.Container_id

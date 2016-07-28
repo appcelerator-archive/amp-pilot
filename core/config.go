@@ -85,12 +85,8 @@ func (self *PilotConfig) setDefault() {
 //Update config with env variables
 func (self *PilotConfig) loadConfigUsingEnvVariable() {
     self.Consul = getStringParameter("CONSUL", self.Consul)
-    if (loadInfo.serviceName == "unknown") {
-        self.Name = getStringParameter("SERVICE_NAME", self.Name)
-    }
-    if (loadInfo.cmd == "") {
-        self.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", self.Cmd)
-    }
+    self.Name = getStringParameter("SERVICE_NAME", self.Name)
+    self.Cmd = getStringParameter("AMPPILOT_LAUNCH_CMD", self.Cmd)
     self.CmdReady = getStringParameter("AMPPILOT_READY_CMD", self.CmdReady)
     self.NetInterface = getStringParameter("AMPPILOT_NETINTERFACE", self.NetInterface)
     self.RegisteredPort = getIntParameter("AMPPILOT_REGISTEREDPORT", self.RegisteredPort)
@@ -99,7 +95,7 @@ func (self *PilotConfig) loadConfigUsingEnvVariable() {
     self.ApplicationStop = getBoolParameter("AMPPILOT_APPLICATIONSTOP", self.ApplicationStop)
     //self.LogFileFormat = getStringParameter("AMPPILOT_LOGFILEFORMAT", self.LogFileFormat)
     self.Dependencies = getDependencyArrayParameter("DEPENDENCIES", self.Dependencies)
-    self.Kafka = getStringParameter("KAFKA", self.Kafka)
+    self.Kafka = getStringParameter("AMPPILOT_KAFKA", self.Kafka)
     self.KafkaTopic = getStringParameter("KAFKA_TOPIC", self.KafkaTopic)
 }
 
