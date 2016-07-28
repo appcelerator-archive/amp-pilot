@@ -6,16 +6,25 @@ BIN1=/bin/amppilot/amp-pilot.alpine
 BIN2=/bin/amppilot/amp-pilot.amd64
 
 echo "pilotLoader launched"
-while [ ! -f $BIN1 ]
-do
+if [ ! -f $BIN1 ]
+then
 	echo "waiting for "$BIN1
-	sleep 3
-done
-while [ ! -f $BIN2 ]
-do
+	sleep 5
+fi
+if [ ! -f $BIN2 ]
+then
 	echo "waiting for "$BIN2
-	sleep 3
-done
+	sleep 5
+fi
+
+if [ ! -f $BIN1 ]
+then
+	exit 1
+fi
+if [ ! -f $BIN2 ]
+then
+	exit 1
+fi
 
 echo "binaries ready"
 if [ -f $FILE_U ]
