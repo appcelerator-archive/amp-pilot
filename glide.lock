@@ -1,0 +1,71 @@
+hash: 5209a698b178bd63cf6d630cf4b2f531322db6de623c01d3dfdbcd1d2c1a6cf9
+updated: 2016-07-29T08:15:39.150600152+02:00
+imports:
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/docker/distribution
+  version: 87917f30529e6a7fca8eaff2932424915fb11225
+  subpackages:
+  - reference
+  - digest
+- name: github.com/docker/engine-api
+  version: 4eca04ae18f4f93f40196a17b9aa6e11262a7269
+  subpackages:
+  - client
+  - types
+  - client/transport
+  - client/transport/cancellable
+  - types/container
+  - types/filters
+  - types/network
+  - types/reference
+  - types/registry
+  - types/swarm
+  - types/time
+  - types/versions
+  - types/blkiodev
+  - types/strslice
+- name: github.com/docker/go-connections
+  version: 990a1a1a70b0da4c4cb70e117971a4f0babfbf1a
+  subpackages:
+  - sockets
+  - tlsconfig
+  - nat
+- name: github.com/docker/go-units
+  version: f2d77a61e3c169b43402a0a1e84f06daf29b8190
+- name: github.com/eapache/go-resiliency
+  version: b86b1ec0dd4209a588dc1285cdd471e73525c0b3
+  subpackages:
+  - breaker
+- name: github.com/eapache/go-xerial-snappy
+  version: bb955e01b9346ac19dc29eb16586c90ded99a98c
+- name: github.com/eapache/queue
+  version: ded5959c0d4e360646dc9e9908cff48666781367
+- name: github.com/golang/snappy
+  version: d9eb7a3d35ec988b8585d4a0068e462c27d28380
+- name: github.com/klauspost/crc32
+  version: 19b0b332c9e4516a6370a0456e6182c3b5036720
+- name: github.com/Microsoft/go-winio
+  version: ce2922f643c8fd76b46cadc7f404a06282678b34
+- name: github.com/opencontainers/runc
+  version: 1a81e9ab1f138c091fe5c86d0883f87716088527
+  subpackages:
+  - libcontainer/user
+- name: github.com/Shopify/sarama
+  version: e8020bffa1cae3ddf8068cb03416fc53d1627f3d
+- name: github.com/Sirupsen/logrus
+  version: 55eb11d21d2a31a3cc93838241d04800f52e823d
+  subpackages:
+  - formatters/logstash
+- name: golang.org/x/net
+  version: 4876518f9e71663000c348837735820161a42df7
+  subpackages:
+  - context
+  - proxy
+- name: golang.org/x/sys
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  subpackages:
+  - windows
+testImports: []

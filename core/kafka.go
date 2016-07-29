@@ -55,11 +55,11 @@ func (self *Kafka) startPeriodicKafkaChecking() {
                     config := samara.NewConfig()
                     client, err := samara.NewClient(strings.Split(conf.Kafka,","), config)
                     if (err != nil) {
-                        applog.LogError("Error on kafka client: ", err)
+                        applog.LogError("Error on kafka client: %v", err)
                     } else {
                         prod, err := samara.NewAsyncProducerFromClient(client)
                         if err != nil {
-                            applog.LogError("Error on kafka producer: ", err)
+                            applog.LogError("Error on kafka producer: %v", err)
                         } else {
                             applog.Log("Kafka producer created on topic: amp-logs")
                             self.producer = prod
