@@ -8,9 +8,9 @@ ENV PATH /go/bin:$PATH
 RUN mkdir -p /go/src/github.com/appcelerator/amp-pilot /go/bin
 WORKDIR /go/src/github.com/appcelerator/amp-pilot
 COPY ./ ./
-#RUN rm -rf ./vendor
-#RUN go get -u github.com/Masterminds/glide/...
-#RUN glide install
+RUN rm -rf ./vendor
+RUN go get -u github.com/Masterminds/glide/...
+RUN glide install
 RUN go build -o /go/bin/amp-pilot.alpine              
 
 
