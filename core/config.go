@@ -147,8 +147,8 @@ func getIntParameter(envVariableName string, def int) int {
 
 //return env variable value convert to string array, if empty return default value
 func getDependencyArrayParameter(envVariableName string, def []DependencyConfig) []DependencyConfig {
-    value, defined := os.LookupEnv(envVariableName)
-    if !defined {
+    value := os.Getenv(envVariableName)
+    if value == "" {
         return def
     } 
     list := strings.Split( strings.Replace(value," ","", -1), ",")
