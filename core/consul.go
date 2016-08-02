@@ -47,6 +47,7 @@ var consul Consul
 func (self *Consul) IsDependencyReady(name string) bool {
     data, err := self.getJson("http://"+conf.Consul+"/v1/health/checks/"+name)
     if err != nil {
+        fmt.Println("Error reading consul: ",err)
         return false
     }
     var consulHealthAnswer []consulHealth
@@ -62,6 +63,7 @@ func (self *Consul) IsDependencyReady(name string) bool {
     }
     return false
 }
+
 
 //Register app mate onto Consul and/or heard-beat
 func (self *Consul) RegisterApp(serviceId string, name string, currentPoll int) {
@@ -80,6 +82,8 @@ func (self *Consul) RegisterApp(serviceId string, name string, currentPoll int) 
         _, err := self.putJson("http://"+conf.Consul+"/v1/agent/service/register", payloadServ)
         if err == nil {
             self.serviceRegistered=true
+        } else {
+            fmt.Println("Error registring 1/2 on consul: ",err)
         }
     }
     registerDataCheck := consulRegisterCheck {
@@ -91,7 +95,10 @@ func (self *Consul) RegisterApp(serviceId string, name string, currentPoll int) 
         TTL: fmt.Sprintf("%ds", currentPoll * 2),
     }
     payloadCheck, _ := json.Marshal(registerDataCheck)
-    self.putJson("http://"+conf.Consul+"/v1/agent/check/register", payloadCheck)   
+    _, err2 := self.putJson("http://"+conf.Consul+"/v1/agent/check/register", payloadCheck)   
+    if err2 != nil {
+        fmt.Println("Error registring 2/2 on consul: ",err2)
+    }
 }
 
 //De-register app mate onto Consul
