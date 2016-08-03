@@ -23,5 +23,7 @@ COPY ./amp-pilot /go/bin/amp-pilot.amd64
 COPY ./pilotLoader /go/bin/pilotLoader
 RUN chmod +x /go/bin/*
 
+HEALTHCHECK --interval=3s --timeout=10s --retries=6 CMD pidof amp-pilot-alpine
+
 ENTRYPOINT ["/go/bin/amp-pilot.alpine"]
 CMD ["initBinaries"]
